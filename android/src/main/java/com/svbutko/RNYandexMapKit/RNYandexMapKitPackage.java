@@ -25,10 +25,6 @@ public class RNYandexMapKitPackage implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        RNYandexMapKitManager mapManager = new RNYandexMapKitManager();
-
-        return Arrays.<ViewManager>asList(
-                mapManager
-        );
+        return Arrays.<ViewManager>asList(new RNYandexMapKitManager());
     }
 }
