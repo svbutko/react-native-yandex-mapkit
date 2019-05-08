@@ -5,6 +5,6 @@ const RNYandexMapKit = requireNativeComponent("RNYandexMapKit");
 
 export class MapView extends Component {
     render(): JSX.Element {
-        return <RNYandexMapKit style={{flex: 1, backgroundColor: "green"}}/>;
+        return <RNYandexMapKit {...this.props}/>;
     }
 }

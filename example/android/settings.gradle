@@ -1,6 +1,6 @@
 rootProject.name = 'example'
 
-include ':react-native-yandex-map-kit'
-project(':react-native-yandex-map-kit').projectDir = new File(rootProject.projectDir, '../../android')
+include ':react-native-yandex-mapkit'
+project(':react-native-yandex-mapkit').projectDir = new File(rootProject.projectDir, '../../android')
 
 include ':app'

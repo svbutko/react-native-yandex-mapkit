@@ -1,6 +1,7 @@
 
 package com.svbutko.RNYandexMapKit;
 
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,7 @@ import com.facebook.react.bridge.JavaScriptModule;
 public class RNYandexMapKitPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-      return Arrays.<NativeModule>asList(new RNYandexMapKitModule(reactContext));
+        return Collections.emptyList();
     }
 
     // Deprecated from RN 0.47
