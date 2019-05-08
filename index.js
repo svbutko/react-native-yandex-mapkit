@@ -1,6 +1,3 @@
+import {MapView} from "./src/MapView";
 
-import { NativeModules } from 'react-native';
-
-const { RNReactNativeYandexMapkit } = NativeModules;
-
-export default RNReactNativeYandexMapkit;
+export default MapView;

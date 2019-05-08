@@ -10,7 +10,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "yandex",
+    "mapkit",
+    "яндекс",
+    "карты"
   ],
   "author": "Sergei Butko <svbutko@hotmail.com>",
   "license": "MIT",
