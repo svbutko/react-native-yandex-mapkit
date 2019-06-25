@@ -1,11 +1,11 @@
 /*tslint:disable:interface-name*/
-import {LatLng} from "react-native-yandex-mapkit";
 
 declare module "react-native-yandex-mapkit" {
     import React, {Component, ClassAttributes} from "react";
     import {StyleProp, ViewStyle, NativeSyntheticEvent, ImageURISource, ImageRequireSource, ViewProps} from "react-native";
 
     export interface MapViewProps {
+        apiKey: string;
         markers: MarkerProps[];
         initialRegion?: Region;
         onMarkerPress?: (userData: Object, coordinates: LatLng) => void;
