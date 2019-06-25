@@ -1,4 +1,6 @@
 /*tslint:disable:interface-name*/
+import {LatLng} from "react-native-yandex-mapkit";
+
 declare module "react-native-yandex-mapkit" {
     import React, {Component, ClassAttributes} from "react";
     import {StyleProp, ViewStyle, NativeSyntheticEvent, ImageURISource, ImageRequireSource, ViewProps} from "react-native";
@@ -6,9 +8,7 @@ declare module "react-native-yandex-mapkit" {
     export interface MapViewProps {
         markers: MarkerProps[];
         initialRegion?: Region;
-        onMarkerPress?: (
-            event: MapEvent<{ action: "marker-press"; id: string }>
-        ) => void;
+        onMarkerPress?: (userData: Object, coordinates: LatLng) => void;
         style?: StyleProp<ViewStyle>;
     }
 
@@ -54,7 +54,6 @@ declare module "react-native-yandex-mapkit" {
         centerOffset?: Point;
         calloutOffset?: Point;
         draggable?: boolean;
-        onPress?: () => void;
         userData?: object;
     }
 }

@@ -1,5 +1,6 @@
 package com.svbutko.RNYandexMapKit;
 
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.SimpleViewManager;
@@ -14,12 +15,19 @@ import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
 public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
     public static final String REACT_CLASS = "RNYandexMapKit";
+    public static final int ANIMATE_TO_REGION = 1;
 
     public MapView map;
     private ImageProvider markerIcon;
     private MapObjectCollection mapObjects;
+    private Callback onMarkerPressCallback;
 
     @Override
     public String getName() {
@@ -84,6 +92,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
         double longitude = latLng.getDouble("longitude");
 
         boolean dragable = marker.hasKey("draggable") && marker.getBoolean("draggable");
+        Object userData = marker.hasKey("userData") ? marker.getMap("userData") : new Object();
 
         Point point = new Point(latitude, longitude);
         PlacemarkMapObject mark = mapObjects.addPlacemark(point);
@@ -96,12 +105,20 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
         mark.setOpacity(opacity);
         //mark.setIcon(this.markerIcon);
         mark.setDraggable(dragable);
-        //mark.setUserData();
-        //mark.addTapListener(data -> this.addMarker(data));
+        mark.setUserData(userData);
+        mark.addTapListener(this::onMarkerPress);
     }
 
-    public void onMarkerPress(MapObject tapListener) {
+    public boolean onMarkerPress(MapObject mapObject, Point point) {
+        if (mapObject instanceof PlacemarkMapObject && this.onMarkerPressCallback != null) {
+            this.onMarkerPressCallback.invoke(mapObject.getUserData(), point);
+            return true;
+        }
+        return false;
+    }
 
+    public void setOnMarkerPress(Callback onPress) {
+        this.onMarkerPressCallback = onPress;
     }
 
     public void setMarkers(ReadableArray markers) {
@@ -110,17 +127,40 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
         }
     }
 
-    @Override
-    protected void onStop() {
-        this.map.onStop();
-        MapKitFactory.getInstance().onStop();
-        super.onStop();
-    }
+//    @Override
+//    protected void onStop() {
+//        this.map.onStop();
+//        MapKitFactory.getInstance().onStop();
+//        super.onStop();
+//    }
+//
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        MapKitFactory.getInstance().onStart();
+//        this.map.onStart();
+//    }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        MapKitFactory.getInstance().onStart();
-        this.map.onStart();
+    public void receiveCommand(MapView mapView, int commandId, @Nullable ReadableArray  args) {
+        super.receiveCommand(mapView, commandId, args);
+        switch (commandId) {
+            case ANIMATE_TO_REGION:
+                this.setAnimateToCoordinated(args.getMap(0));
+                break;
+        }
+    }
+
+    @Nullable
+    @Override
+    public Map<String, Integer> getCommandsMap() {
+        Map<String, Integer> map = this.CreateMap("animateToRegion", ANIMATE_TO_REGION);
+        return map;
+    }
+
+    public static <K, V> Map<K, V> CreateMap(K k1, V v1) {
+        Map map = new HashMap<K, V>();
+        map.put(k1, v1);
+        return map;
     }
 }
