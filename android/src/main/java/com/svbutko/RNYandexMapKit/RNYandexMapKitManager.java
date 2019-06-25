@@ -1,31 +1,21 @@
 package com.svbutko.RNYandexMapKit;
 
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
-import com.facebook.react.uimanager.annotations.ReactProp;
-
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
-import com.yandex.mapkit.mapview.MapView;
+import com.yandex.mapkit.map.MapObject;
+import com.yandex.mapkit.map.MapObjectCollection;
 import com.yandex.mapkit.map.PlacemarkMapObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
 
 public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
     public static final String REACT_CLASS = "RNYandexMapKit";
-
-    private static final String MAPKIT_API_KEY = "216c53c2-0add-46e9-bdcf-fa4d8c960b95";
-    private static final Point TARGET_LOCATION = new Point(59.945933, 30.320045);
 
     public MapView map;
     private ImageProvider markerIcon;
@@ -38,12 +28,10 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
 
     @Override
     public MapView createViewInstance(ThemedReactContext context) {
-        MapKitFactory.setApiKey(MAPKIT_API_KEY);
         MapKitFactory.initialize(context);
 
         this.map = new MapView(context);
-        this.map.getMap().move(new CameraPosition(TARGET_LOCATION, 14.0f, 0.0f, 0.0f));
-        mapObjects = mapView.getMap().getMapObjects().addCollection();
+        mapObjects = this.map.getMap().getMapObjects().addCollection();
 
         MapKitFactory.getInstance().onStart();
         this.map.onStart();
@@ -51,30 +39,75 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
         return this.map;
     }
 
-    public void animatedZoomToCoordinates(Point point) {
+    public void setAnimateToCoordinated(ReadableMap region) {
+        double latitude = region.getDouble("latitude");
+        double longitude = region.getDouble("longitude");
+        double latitudeDelta = region.getDouble("latitudeDelta");
+        double longitudeDelta = region.getDouble("longitudeDelta");
+
+        Point point = new Point(latitude, longitude);
+
+        this.animatedToCoordinates(point);
+    }
+
+    public void animatedToCoordinates(Point point) {
         this.map.getMap().move(
-                new CameraPosition(point, 14.0f, 0.0f, 0.0f),
+                new CameraPosition(point, 10.0f, 0.0f, 0.0f),
                 new Animation(Animation.Type.SMOOTH, 5),
                 null);
     }
 
-    public void addMarker() {
-        Point point = new Point();
-        PlacemarkMapObject mark = mapObjects.addPlacemark(point);
-
-        if (this.markerIcon == null) {
-            this.markerIcon = ImageProvider.fromFile(//FILE NAME);
-        }
-
-        mark.setOpacity(1.0f);
-        mark.setIcon(this.markerIcon);
-        mark.setDraggable(false);
-        mark.addTapListener(data -> this.onMarkerPress(data));
-        mark.setUserData(//SET USER DATA);
+    public void setApiKey(String apiKey) {
+        MapKitFactory.setApiKey(apiKey);
     }
 
-    public void onMarkerPress(MapObjectTapListener tapListener) {
+    public void setInitialRegion(ReadableMap region) {
+        double latitude = region.getDouble("latitude");
+        double longitude = region.getDouble("longitude");
+        double latitudeDelta = region.getDouble("latitudeDelta");
+        double longitudeDelta = region.getDouble("longitudeDelta");
 
+        Point point = new Point(latitude, longitude);
+
+        this.map.getMap().move(
+                new CameraPosition(point, 10.0f, 0.0f, 0.0f),
+                new Animation(Animation.Type.SMOOTH, 5),
+                null
+        );
+    }
+
+    public void addMarker(ReadableMap marker) {
+        Float opacity = marker.hasKey("opacity") ? (float)marker.getDouble("opacity") : 1.0f;
+
+        ReadableMap latLng = marker.getMap("coordinate");
+        double latitude = latLng.getDouble("latitude");
+        double longitude = latLng.getDouble("longitude");
+
+        boolean dragable = marker.hasKey("draggable") && marker.getBoolean("draggable");
+
+        Point point = new Point(latitude, longitude);
+        PlacemarkMapObject mark = mapObjects.addPlacemark(point);
+
+
+        if (this.markerIcon == null) {
+            //this.markerIcon = ImageProvider.fromAsset(this, "");
+        }
+
+        mark.setOpacity(opacity);
+        //mark.setIcon(this.markerIcon);
+        mark.setDraggable(dragable);
+        //mark.setUserData();
+        //mark.addTapListener(data -> this.addMarker(data));
+    }
+
+    public void onMarkerPress(MapObject tapListener) {
+
+    }
+
+    public void setMarkers(ReadableArray markers) {
+        for (int i = 0; i < markers.size(); i++) {
+            this.addMarker(markers.getMap(i));
+        }
     }
 
     @Override

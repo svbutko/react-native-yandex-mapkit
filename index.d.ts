@@ -18,6 +18,7 @@ declare module "react-native-yandex-mapkit" {
     export type MapViewProperties = MapViewProps & ClassAttributes<MapViewStatic>;
 
     export default class MapView extends Component<MapViewProperties> {
+        animateToRegion(region: Region): void;
     }
 
     export interface Region {
@@ -54,5 +55,6 @@ declare module "react-native-yandex-mapkit" {
         calloutOffset?: Point;
         draggable?: boolean;
         onPress?: () => void;
+        userData?: object;
     }
 }
