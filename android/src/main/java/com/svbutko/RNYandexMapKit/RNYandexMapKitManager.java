@@ -1,5 +1,9 @@
 package com.svbutko.RNYandexMapKit;
 
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.util.Log;
+
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -22,6 +26,7 @@ import javax.annotation.Nullable;
 
 public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
     public static final String REACT_CLASS = "RNYandexMapKit";
+
     public static final int ANIMATE_TO_REGION = 1;
 
     public MapView map;
@@ -36,6 +41,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
 
     @Override
     public MapView createViewInstance(ThemedReactContext context) {
+        RNYandexMapKitModule nativeModule = context.getNativeModule(RNYandexMapKitModule.class);
+
+        MapKitFactory.setApiKey(nativeModule.getApiKey());
         MapKitFactory.initialize(context);
 
         this.map = new MapView(context);
@@ -63,10 +71,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
                 new CameraPosition(point, 10.0f, 0.0f, 0.0f),
                 new Animation(Animation.Type.SMOOTH, 5),
                 null);
-    }
-
-    public void setApiKey(String apiKey) {
-        MapKitFactory.setApiKey(apiKey);
     }
 
     public void setInitialRegion(ReadableMap region) {

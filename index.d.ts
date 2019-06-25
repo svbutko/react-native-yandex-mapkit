@@ -5,7 +5,6 @@ declare module "react-native-yandex-mapkit" {
     import {StyleProp, ViewStyle, NativeSyntheticEvent, ImageURISource, ImageRequireSource, ViewProps} from "react-native";
 
     export interface MapViewProps {
-        apiKey: string;
         markers?: MarkerProps[];
         initialRegion?: Region;
         onMarkerPress?: (userData: Object, coordinates: LatLng) => void;
@@ -13,6 +12,7 @@ declare module "react-native-yandex-mapkit" {
     }
 
     export interface MapViewStatic extends Component<MapViewProps> {
+        setApiKey(apiKey: string): void;
     }
 
     export type MapViewProperties = MapViewProps & ClassAttributes<MapViewStatic>;
