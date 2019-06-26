@@ -33,6 +33,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
     private ImageProvider markerIcon;
     private MapObjectCollection mapObjects;
     private Callback onMarkerPressCallback;
+    private Callback onMapPressCallback;
 
     @Override
     public String getName() {
@@ -118,11 +119,18 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
             this.onMarkerPressCallback.invoke(mapObject.getUserData(), point);
             return true;
         }
+        if (this.onMapPressCallback != null) {
+            this.onMapPressCallback.invoke();
+        }
         return false;
     }
 
     public void setOnMarkerPress(Callback onPress) {
         this.onMarkerPressCallback = onPress;
+    }
+
+    public void setOnMapPress(Callback onPress) {
+        this.onMapPressCallback = onPress;
     }
 
     public void setMarkers(ReadableArray markers) {

@@ -17,6 +17,7 @@ public class RNYandexMapKitModule extends ReactContextBaseJavaModule {
   public static final String PROP_MARKERS = "markers";
   public static final String PROP_INITIAL_REGION = "initialRegion";
   public static final String PROP_ON_MARKER_PRESS = "onMarkerPress";
+  public static final String PROP_ON_MAP_PRESS = "onMapPress";
 
   public RNYandexMapKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -30,6 +31,11 @@ public class RNYandexMapKitModule extends ReactContextBaseJavaModule {
   @ReactProp(name = PROP_ON_MARKER_PRESS)
   public void setOnMarkerPress(RNYandexMapKitManager mapView, Callback onPress) {
     mapView.setOnMarkerPress(onPress);
+  }
+
+  @ReactProp(name = PROP_ON_MAP_PRESS)
+  public void setOnMapPress(RNYandexMapKitManager mapView, Callback onPress) {
+    mapView.setOnMapPress(onPress);
   }
 
   @ReactProp(name = PROP_MARKERS)
