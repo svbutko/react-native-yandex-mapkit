@@ -124,13 +124,13 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         this.animatedToCoordinates(point);
     }
 
-    public void zoomOut() {
+    public void zoomIn() {
         mapView.getMap().move(new CameraPosition(mapView.getMap().getCameraPosition().getTarget(),
                         mapView.getMap().getCameraPosition().getZoom()+1, 0.0f, 0.0f),
                         new Animation(Animation.Type.SMOOTH, 1), null);
     }
 
-    public void zoomIn() {
+    public void zoomOut() {
         mapView.getMap().move(new CameraPosition(mapView.getMap().getCameraPosition().getTarget(),
                         mapView.getMap().getCameraPosition().getZoom()-1, 0.0f, 0.0f),
                 new Animation(Animation.Type.SMOOTH, 1), null);
