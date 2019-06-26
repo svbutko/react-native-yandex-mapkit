@@ -3,6 +3,7 @@ package com.svbutko.RNYandexMapKit;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.facebook.react.bridge.Arguments;
@@ -68,7 +69,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     private InputListener inputListener = new InputListener() {
         @Override
-        public void onMapTap(Map map, Point point) {
+        public void onMapTap(@NonNull com.yandex.mapkit.map.Map map, @NonNull Point point) {
             WritableMap writableMap = Arguments.createMap();
             writableMap.putString("latitude", Double.toString(point.getLatitude()));
             writableMap.putString("longitude", Double.toString(point.getLongitude()));
@@ -77,7 +78,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
 
         @Override
-        public void onMapLongTap(Map map, Point point) {
+        public void onMapLongTap(@NonNull com.yandex.mapkit.map.Map map, @NonNull Point point) {
 
         }
     };
