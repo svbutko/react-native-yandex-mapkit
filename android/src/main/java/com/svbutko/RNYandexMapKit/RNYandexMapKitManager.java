@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
-    public static final String REACT_CLASS = "RNYandexMapView";
+    public static final String REACT_CLASS = "RNYandexMapKit";
 
     public static final int ANIMATE_TO_REGION = 1;
 
