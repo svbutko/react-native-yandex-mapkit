@@ -8,14 +8,11 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.annotations.ReactProp;
-import com.facebook.react.module.annotations.ReactModule;
 
-@ReactModule(name = RNYandexMapKitModule.REACT_CLASS)
 public class RNYandexMapKitModule extends ReactContextBaseJavaModule {
+  public static final String REACT_CLASS = "RNYandexMapKit";
 
   private String apiKey;
-
-  public static final String REACT_CLASS = "RNYandexMapKit";
 
   public RNYandexMapKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
