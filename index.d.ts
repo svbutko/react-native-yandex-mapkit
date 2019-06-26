@@ -1,7 +1,7 @@
 /*tslint:disable:interface-name*/
 
 declare module "react-native-yandex-mapkit" {
-    import React, {Component, ClassAttributes} from "react";
+    import React, {Component} from "react";
     import {StyleProp, ViewStyle, NativeSyntheticEvent, ImageURISource, ImageRequireSource, ViewProps} from "react-native";
 
     export interface MapViewProps {
@@ -14,7 +14,6 @@ declare module "react-native-yandex-mapkit" {
 
     export default class MapView extends Component<MapViewProps> {
         animateToRegion(region: Region): void;
-        setApiKey(apiKey: string): void;
     }
 
     export interface Region {
