@@ -18,6 +18,7 @@ import com.yandex.mapkit.map.MapObjectCollection;
 import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
+import com.yandex.mapkit.user_location.UserLocationLayer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
     private MapObjectCollection mapObjects;
     private Callback onMarkerPressCallback;
     private Callback onMapPressCallback;
+    private UserLocationLayer userLocationLayer;
 
     @Override
     public String getName() {
@@ -65,6 +67,35 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
         Point point = new Point(latitude, longitude);
 
         this.animatedToCoordinates(point);
+    }
+
+    public void followUserLocation(boolean isFollowing) {
+        if (isFollowing) {
+            this.userLocationLayer = this.map.getMap().getUserLocationLayer();
+            this.userLocationLayer.setEnabled(true);
+            this.userLocationLayer.setHeadingEnabled(true);
+        }
+    }
+
+    public void zoomOut() {
+        this.map.getMap().move(new CameraPosition(this.map.getMap().getCameraPosition().getTarget(),
+                        this.map.getMap().getCameraPosition().getZoom()+1, 0.0f, 0.0f),
+                        new Animation(Animation.Type.SMOOTH, 1), null);
+    }
+
+    public void zoomIn() {
+        this.map.getMap().move(new CameraPosition(this.map.getMap().getCameraPosition().getTarget(),
+                        this.map.getMap().getCameraPosition().getZoom()-1, 0.0f, 0.0f),
+                new Animation(Animation.Type.SMOOTH, 1), null);
+    }
+
+    public void navigateToUserLocation() {
+        if (this.userLocationLayer != null) {
+            this.map.getMap().move(
+                    new CameraPosition(this.userLocationLayer.cameraPosition().getTarget(), 15.0f, 0.0f, 0.0f),
+                    new Animation(Animation.Type.SMOOTH, 1),
+                    null);
+        }
     }
 
     public void animatedToCoordinates(Point point) {
@@ -118,9 +149,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
         if (mapObject instanceof PlacemarkMapObject && this.onMarkerPressCallback != null) {
             this.onMarkerPressCallback.invoke(mapObject.getUserData(), point);
             return true;
-        }
-        if (this.onMapPressCallback != null) {
-            this.onMapPressCallback.invoke();
         }
         return false;
     }

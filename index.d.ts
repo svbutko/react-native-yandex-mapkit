@@ -9,12 +9,16 @@ declare module "react-native-yandex-mapkit" {
         initialRegion?: Region;
         onMarkerPress?: (userData: Object, coordinates: LatLng) => void;
         onMapPress?: () => void;
+        followUserLocation?: boolean;
         style?: StyleProp<ViewStyle>;
     }
 
     export default class MapView extends Component<MapViewProps> {
         public static setApiKey(apiKey: string): void;
         public animateToRegion(region: Region): void;
+        public zoomIn(): void;
+        public zoomOut(): void;
+        public navigateToUserLocation(): void;
     }
 
     export interface Region {

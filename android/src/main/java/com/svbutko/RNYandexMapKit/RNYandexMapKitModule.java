@@ -20,6 +20,7 @@ public class RNYandexMapKitModule extends ReactContextBaseJavaModule {
   public static final String PROP_INITIAL_REGION = "initialRegion";
   public static final String PROP_ON_MARKER_PRESS = "onMarkerPress";
   public static final String PROP_ON_MAP_PRESS = "onMapPress";
+  public static final String PROP_FOLLOW_USER_LOCATION = "followUserLocation";
 
   public RNYandexMapKitModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -48,6 +49,11 @@ public class RNYandexMapKitModule extends ReactContextBaseJavaModule {
   @ReactProp(name = PROP_INITIAL_REGION)
   public void setInitialRegion(RNYandexMapKitManager mapView, ReadableMap region) {
     mapView.setInitialRegion(region);
+  }
+
+  @ReactProp(name = PROP_FOLLOW_USER_LOCATION)
+  public void setFollowUserLocation(RNYandexMapKitManager mapView, boolean isFollowing) {
+    mapView.followUserLocation(isFollowing);
   }
 
   @ReactMethod
