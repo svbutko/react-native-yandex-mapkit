@@ -7,8 +7,6 @@ const RNYandexMapKitModule = NativeModules.RNYandexMapKit;
 
 export class MapView extends Component<MapViewProps> {
     public static setApiKey(apiKey: string): void {
-        console.log("KEY: ", apiKey);
-        console.log("NativeModules:", NativeModules);
         RNYandexMapKitModule.setApiKey(apiKey);
     }
 
