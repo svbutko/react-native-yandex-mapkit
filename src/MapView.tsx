@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {MapViewProps, Region} from "react-native-yandex-mapkit";
 import {UIManager, requireNativeComponent, findNodeHandle, NativeModules} from "react-native";
 
-const RNYandexMapKit = requireNativeComponent("RNYandexMapView");
+const RNYandexMapKit = requireNativeComponent("RNYandexMapKit");
 const RNYandexMapKitModule = NativeModules.RNYandexMapKit;
 
 export class MapView extends Component<MapViewProps> {
