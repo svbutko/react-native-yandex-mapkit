@@ -13,7 +13,7 @@ public class RNYandexMapKitModule extends ReactContextBaseJavaModule {
 
   private String apiKey;
 
-  public static final String REACT_CLASS = "TextGradient";
+  public static final String REACT_CLASS = "RNYandexMapKit";
   public static final String PROP_MARKERS = "markers";
   public static final String PROP_INITIAL_REGION = "initialRegion";
   public static final String PROP_ON_MARKER_PRESS = "onMarkerPress";
