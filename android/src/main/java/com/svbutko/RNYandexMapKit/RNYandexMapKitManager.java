@@ -31,7 +31,11 @@ import com.yandex.mapkit.user_location.UserLocationLayer;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
 import com.yandex.runtime.image.ImageProvider;
+import com.yandex.mapkit.map.PolygonMapObject;
+import com.yandex.mapkit.geometry.Polygon;
+import com.yandex.mapkit.geometry.LinearRing;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,15 +54,12 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final String PROP_ON_MARKER_PRESS = "onMarkerPress";
     public static final String PROP_ON_MAP_PRESS = "onMapPress";
     public static final String PROP_FOLLOW_USER_LOCATION = "followUserLocation";
+    public static final String PROP_POLYGONS = "polygons";
 
-    private MapObjectCollection mapObjects;
-    private Callback onMarkerPressCallback;
-    private Callback onMapPressCallback;
     private UserLocationLayer userLocationLayer;
 
     private ThemedReactContext context = null;
     private MapView mapView = null;
-
 
     //TODO: add icon prop
     private byte[] imageDecodedString = Base64.decode("iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS40E0BoxAAAAkhJREFUWEftl79O40AQxv0OkMROZCAHytsc75AKIfEOQEFDAz21BQ0F0h05TgEhCoKERIEQgoIKJCr665b5otkwux4HW7FJcVj6SZv5832eOI7XgTFmKqhBn4uZmZjo9prRzsHS/HHSWbgiHpNO+wFrxJBDDWo1DR81aIHI37C+/SdqvNHa5AG16KH12BNQg2g6q9XWe80wt6EPeqFBa/UEUgEUnoSNnhSZBNZKmTsfUPC7FV3LxjJgTcfcMe1FjXPZUCasPTIfmfYb9UNZWAXsMTS3xrgN1OIK6A6NaRHTL/DSS2bS/9E2g7VV87C5MQRrxLRaDfaKC017t7Ji/r280Am7B2LIaT0ZdAM6g10l4dBfbJvXJFFN7YEcalCraUjgGRw3w1ctKYFg3gO1moYEnviq1aRlsPxz7KT+gVr0aFqST42LTGuPPFN/G6f4/4yn9qsGRabOMy0I6Fn5qCUkZf9zwTM4rde2tKRGWf/V8MRXXeiROOnTienCmLY74Y2XqAz2iqe3EWBjbPLuvILSYY+Prc8XTj2c1jfGFujCKywN1nZ3mcK8yqlH0wLfmF5dZve9holhTX1Db0EBbU0GsnESWMsxBc4HCwqLvCFmwRopU5AKWKihjOvtXFeJGgTUhOt94AnlhnvVaYEatKDxJCr+yso9maZADUogwK+ZqokP1441BWrQB0IkeC8NNLjmU1OgBjUg+KsVPUkjCedymQI1mAWE6b58loaAY7lNgRocBwyO5lp7Sad9C47i5l5RU6AGq8cE77senOxoWv4fAAAAAElFTkSuQmCC", Base64.DEFAULT);
@@ -99,8 +100,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
         mapView = new MapView(context);
         mapView.getMap().addInputListener(inputListener);
-
-        mapObjects = mapView.getMap().getMapObjects().addCollection();
+        mapView.getMap().getMapObjects().addCollection();
 
         userLocationLayer = mapView.getMap().getUserLocationLayer();
         userLocationLayer.setEnabled(true);
@@ -126,13 +126,13 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     public void zoomIn() {
         mapView.getMap().move(new CameraPosition(mapView.getMap().getCameraPosition().getTarget(),
-                        mapView.getMap().getCameraPosition().getZoom()+1, 0.0f, 0.0f),
+                        mapView.getMap().getCameraPosition().getZoom()+2, 0.0f, 0.0f),
                         new Animation(Animation.Type.SMOOTH, 1), null);
     }
 
     public void zoomOut() {
         mapView.getMap().move(new CameraPosition(mapView.getMap().getCameraPosition().getTarget(),
-                        mapView.getMap().getCameraPosition().getZoom()-1, 0.0f, 0.0f),
+                        mapView.getMap().getCameraPosition().getZoom()-2, 0.0f, 0.0f),
                 new Animation(Animation.Type.SMOOTH, 1), null);
     }
 
@@ -162,10 +162,30 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         Point point = new Point(latitude, longitude);
 
         view.getMap().move(
-                new CameraPosition(point, 18.0f, 0.0f, 0.0f),
+                new CameraPosition(point, 10.0f, 0.0f, 0.0f),
                 new Animation(Animation.Type.SMOOTH, 5),
                 null
         );
+    }
+
+    @ReactProp(name = PROP_POLYGONS)
+    public void setPolygons(MapView view, ReadableArray polygons) {
+        ArrayList<Point> rectPoints = new ArrayList<>();
+
+        for (int i = 0; i < polygons.size(); i++) {
+            ReadableMap polygon = polygons.getMap(i);
+            ReadableMap latLng = polygon.getMap("coordinate");
+            double latitude = latLng.getDouble("latitude");
+            double longitude = latLng.getDouble("longitude");
+
+            Point point = new Point(latitude, longitude);
+            rectPoints.add(point);
+        }
+
+        PolygonMapObject rect = view.getMap().getMapObjects().addPolygon(new Polygon(new LinearRing(rectPoints), new ArrayList<LinearRing>()));
+
+        rect.setStrokeColor(Color.rgb(0, 148, 113));
+        rect.setFillColor(Color.argb(85, 0, 148, 113));
     }
 
     public boolean onMarkerPress(MapObject mapObject, Point point) {
@@ -174,7 +194,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             writableMap.putString("latitude", Double.toString(point.getLatitude()));
             writableMap.putString("longitude", Double.toString(point.getLongitude()));
 
-            sendNativeEvent(PROP_ON_MAP_PRESS, writableMap, mapView.getId(), context);
+            sendNativeEvent(PROP_ON_MARKER_PRESS, writableMap, mapView.getId(), context);
             return true;
         }
         return false;

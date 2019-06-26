@@ -6,6 +6,7 @@ declare module "react-native-yandex-mapkit" {
 
     export interface MapViewProps {
         markers?: MarkerProps[];
+        polygons?: Region[];
         initialRegion?: Region;
         onMarkerPress?: (userData: Object, coordinates: LatLng) => void;
         // tslint:disable-next-line:no-any
