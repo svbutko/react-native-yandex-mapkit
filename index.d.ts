@@ -12,6 +12,10 @@ declare module "react-native-yandex-mapkit" {
         style?: StyleProp<ViewStyle>;
     }
 
+    export class MapKit {
+        setApiKey(apiKey: string): void;
+    }
+
     export default class MapView extends Component<MapViewProps> {
         animateToRegion(region: Region): void;
     }
