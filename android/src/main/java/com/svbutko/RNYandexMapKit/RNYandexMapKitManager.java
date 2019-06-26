@@ -170,22 +170,25 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     @ReactProp(name = PROP_POLYGONS)
     public void setPolygons(MapView view, ReadableArray polygons) {
-        ArrayList<Point> rectPoints = new ArrayList<>();
+        if (polygons != null) {
+            ArrayList<Point> rectPoints = new ArrayList<>();
 
-        for (int i = 0; i < polygons.size(); i++) {
-            ReadableMap polygon = polygons.getMap(i);
-            ReadableMap latLng = polygon.getMap("coordinate");
-            double latitude = latLng.getDouble("latitude");
-            double longitude = latLng.getDouble("longitude");
+            for (int i = 0; i < polygons.size(); i++) {
+                ReadableMap polygon = polygons.getMap(i);
+                ReadableMap latLng = polygon.getMap("coordinate");
+                double latitude = latLng.getDouble("latitude");
+                double longitude = latLng.getDouble("longitude");
 
-            Point point = new Point(latitude, longitude);
-            rectPoints.add(point);
+                Point point = new Point(latitude, longitude);
+                rectPoints.add(point);
+            }
+
+            PolygonMapObject rect = view.getMap().getMapObjects().addPolygon(new Polygon(new LinearRing(rectPoints), new ArrayList<LinearRing>()));
+
+            rect.setStrokeColor(Color.rgb(0, 148, 113));
+            rect.setStrokeWidth(1.0f);
+            rect.setFillColor(Color.argb(85, 0, 148, 113));
         }
-
-        PolygonMapObject rect = view.getMap().getMapObjects().addPolygon(new Polygon(new LinearRing(rectPoints), new ArrayList<LinearRing>()));
-
-        rect.setStrokeColor(Color.rgb(0, 148, 113));
-        rect.setFillColor(Color.argb(85, 0, 148, 113));
     }
 
     public boolean onMarkerPress(MapObject mapObject, Point point) {
@@ -202,25 +205,27 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     @ReactProp(name = PROP_MARKERS)
     public void setMarkers(MapView view, ReadableArray markers) {
-        for (int i = 0; i < markers.size(); i++) {
-            ReadableMap marker = markers.getMap(i);
-            Float opacity = marker.hasKey("opacity") ? (float)marker.getDouble("opacity") : 1.0f;
+        if (markers != null) {
+            for (int i = 0; i < markers.size(); i++) {
+                ReadableMap marker = markers.getMap(i);
+                Float opacity = marker.hasKey("opacity") ? (float)marker.getDouble("opacity") : 1.0f;
 
-            ReadableMap latLng = marker.getMap("coordinate");
-            double latitude = latLng.getDouble("latitude");
-            double longitude = latLng.getDouble("longitude");
+                ReadableMap latLng = marker.getMap("coordinate");
+                double latitude = latLng.getDouble("latitude");
+                double longitude = latLng.getDouble("longitude");
 
-            boolean dragable = marker.hasKey("draggable") && marker.getBoolean("draggable");
-            Object userData = marker.hasKey("userData") ? marker.getMap("userData") : new Object();
+                boolean dragable = marker.hasKey("draggable") && marker.getBoolean("draggable");
+                Object userData = marker.hasKey("userData") ? marker.getMap("userData") : new Object();
 
-            Point point = new Point(latitude, longitude);
-            PlacemarkMapObject mark = view.getMap().getMapObjects().addPlacemark(point);
+                Point point = new Point(latitude, longitude);
+                PlacemarkMapObject mark = view.getMap().getMapObjects().addPlacemark(point);
 
-            mark.setOpacity(opacity);
-            mark.setIcon(ImageProvider.fromBitmap(image));
-            mark.setDraggable(dragable);
-            mark.setUserData(userData);
-            mark.addTapListener(this::onMarkerPress);
+                mark.setOpacity(opacity);
+                mark.setIcon(ImageProvider.fromBitmap(image));
+                mark.setDraggable(dragable);
+                mark.setUserData(userData);
+                mark.addTapListener(this::onMarkerPress);
+            }
         }
     }
 
