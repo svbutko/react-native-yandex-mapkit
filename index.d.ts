@@ -8,7 +8,8 @@ declare module "react-native-yandex-mapkit" {
         markers?: MarkerProps[];
         initialRegion?: Region;
         onMarkerPress?: (userData: Object, coordinates: LatLng) => void;
-        onMapPress?: () => void;
+        // tslint:disable-next-line:no-any
+        onMapPress?: (data: any) => void;
         followUserLocation?: boolean;
         style?: StyleProp<ViewStyle>;
     }
