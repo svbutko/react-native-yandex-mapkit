@@ -13,11 +13,11 @@ declare module "react-native-yandex-mapkit" {
     }
 
     export class MapKit {
-        setApiKey(apiKey: string): void;
+        public static setApiKey(apiKey: string): void;
     }
 
     export default class MapView extends Component<MapViewProps> {
-        animateToRegion(region: Region): void;
+        public animateToRegion(region: Region): void;
     }
 
     export interface Region {
