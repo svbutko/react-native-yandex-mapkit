@@ -29,6 +29,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
     public static final String REACT_CLASS = "RNYandexMapKit";
 
     public static final int ANIMATE_TO_REGION = 1;
+    public static final int ZOOM_IN = 2;
+    public static final int ZOOM_OUT = 3;
+    public static final int NAVIGATE_TO_USER_LOCATION = 4;
 
     public MapView map;
     private ImageProvider markerIcon;
@@ -182,11 +185,20 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
 //    }
 
     @Override
-    public void receiveCommand(MapView mapView, int commandId, @Nullable ReadableArray  args) {
+    public void receiveCommand(MapView mapView, int commandId, @Nullable ReadableArray args) {
         super.receiveCommand(mapView, commandId, args);
         switch (commandId) {
             case ANIMATE_TO_REGION:
                 this.setAnimateToCoordinated(args.getMap(0));
+                break;
+            case ZOOM_IN:
+                this.zoomIn();
+                break;
+            case ZOOM_OUT:
+                this.zoomOut();
+                break;
+            case NAVIGATE_TO_USER_LOCATION:
+                this.navigateToUserLocation();
                 break;
         }
     }
@@ -194,13 +206,23 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> {
     @Nullable
     @Override
     public Map<String, Integer> getCommandsMap() {
-        Map<String, Integer> map = this.CreateMap("animateToRegion", ANIMATE_TO_REGION);
+        Map<String, Integer> map = this.CreateMap(
+                "animateToRegion", ANIMATE_TO_REGION,
+                "zoomIn", ZOOM_IN,
+                "zoomOut", ZOOM_OUT,
+                "navigateToUserLocation", NAVIGATE_TO_USER_LOCATION
+        );
+
         return map;
     }
 
-    public static <K, V> Map<K, V> CreateMap(K k1, V v1) {
+    public static <K, V> Map<K, V> CreateMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
         Map map = new HashMap<K, V>();
         map.put(k1, v1);
+        map.put(k2, v2);
+        map.put(k3, v3);
+        map.put(k4, v4);
+
         return map;
     }
 }
