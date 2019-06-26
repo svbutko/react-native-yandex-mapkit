@@ -11,14 +11,9 @@ declare module "react-native-yandex-mapkit" {
         style?: StyleProp<ViewStyle>;
     }
 
-    export interface MapViewStatic extends Component<MapViewProps> {
-        setApiKey(apiKey: string): void;
-    }
-
-    export type MapViewProperties = MapViewProps & ClassAttributes<MapViewStatic>;
-
-    export default class MapView extends Component<MapViewProperties> {
+    export default class MapView extends Component<MapViewProps> {
         animateToRegion(region: Region): void;
+        setApiKey(apiKey: string): void;
     }
 
     export interface Region {

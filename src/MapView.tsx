@@ -1,12 +1,13 @@
 import React, {Component} from "react";
-import {requireNativeComponent} from "react-native";
+import {requireNativeComponent, NativeModules} from "react-native";
 import {MapViewProps} from "react-native-yandex-mapkit";
 
 const RNYandexMapKit = requireNativeComponent("RNYandexMapKit");
+const RNYandexMapKitModule = NativeModules.RNYandexMapKit;
 
 export class MapView extends Component<MapViewProps> {
     public setApiKey = (apiKey: string): void => {
-        RNYandexMapKit.setApiKey(apiKey);
+        RNYandexMapKitModule.setApiKey(apiKey);
     };
 
     render(): JSX.Element {
