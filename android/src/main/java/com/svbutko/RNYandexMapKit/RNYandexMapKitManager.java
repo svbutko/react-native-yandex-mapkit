@@ -92,8 +92,10 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     private Session.SearchListener searchListener = new Session.SearchListener() {
         @Override
         public void onSearchResponse(@NonNull Response response) {
-            for (GeoObjectCollection.Item searchResult : response.getCollection().getChildren()) {
-                Point resultLocation = searchResult.getObj().getGeometry().get(0).getPoint();
+            List<GeoObjectCollection.Item> searchResultList = response.getCollection().getChildren();
+
+            if(searchResultList.size() > 0) {
+                Point resultLocation = searchResultList.get(0).getObj().getGeometry().get(0).getPoint();
                 if (resultLocation != null) {
                     MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
                     if (userSearchPlacemark != null) {
@@ -138,6 +140,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 sendNativeEvent(PROP_ON_MAP_PRESS, writableMap, mapView.getId(), context);
             }
             if(shouldSearchLocation) {
+                if (searchSession != null) {
+                    searchSession.cancel();
+                }
                 searchSession = searchManager.submit(point, 16, new SearchOptions(), searchListener);
             }
         }
