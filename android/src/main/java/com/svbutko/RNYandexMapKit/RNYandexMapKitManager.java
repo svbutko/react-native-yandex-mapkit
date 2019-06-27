@@ -67,6 +67,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final String PROP_ON_MARKER_PRESS = "onMarkerPress";
     public static final String PROP_ON_MAP_PRESS = "onMapPress";
     public static final String PROP_ON_LOCATION_SEARCH = "onLocationSearch";
+    public static final String PROP_SEARCH_LOCATION = "searchLocation";
 
     private UserLocationLayer userLocationLayer;
     private ThemedReactContext context = null;
@@ -234,14 +235,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         );
     }
 
-    @ReactProp(name = PROP_ON_LOCATION_SEARCH)
-    public void setShouldSearchLocation(MapView view, @Nullable ReadableMap shouldSearch) {
-        shouldSearchLocation = shouldSearch != null;
-    }
-
-    @ReactProp(name = PROP_ON_MAP_PRESS)
-    public void setShouldSendOnMapPress(MapView view, @Nullable ReadableMap shouldSend) {
-        shouldSendOnMapPress = shouldSend != null;
+    @ReactProp(name = PROP_SEARCH_LOCATION, defaultBoolean = false)
+    public void setShouldSearchLocation(MapView view, boolean shouldSearch) {
+        shouldSearchLocation = shouldSearch;
     }
 
     @ReactProp(name = PROP_POLYGONS)

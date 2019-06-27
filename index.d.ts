@@ -14,6 +14,7 @@ declare module "react-native-yandex-mapkit" {
         // tslint:disable-next-line:no-any
         onLocationSearch?: (data: any) => void;
         followUserLocation?: boolean;
+        searchLocation?: boolean;
         style?: StyleProp<ViewStyle>;
     }
 
