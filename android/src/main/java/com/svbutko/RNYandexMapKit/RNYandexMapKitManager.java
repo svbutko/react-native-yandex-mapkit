@@ -45,6 +45,7 @@ import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -277,6 +278,21 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public boolean onMarkerPress(MapObject mapObject, Point point) {
         if (mapObject instanceof PlacemarkMapObject) {
             WritableMap writableMap = Arguments.createMap();
+            Object userData = mapObject.getUserData();
+
+            if (userData != null) {
+                try {
+                    String id = userData.getClass().getField("id").toString();
+                    WritableMap resultData = Arguments.createMap();
+                    resultData.putString("id", id);
+
+                    writableMap.putMap("userData", resultData);
+                }
+                catch (Exception e) {
+
+                }
+            }
+
             writableMap.putString("latitude", Double.toString(point.getLatitude()));
             writableMap.putString("longitude", Double.toString(point.getLongitude()));
 
