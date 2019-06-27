@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -18,6 +17,7 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.yandex.mapkit.Animation;
+import com.yandex.mapkit.GeoObjectCollection;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.LinearRing;
 import com.yandex.mapkit.geometry.Point;
@@ -31,20 +31,19 @@ import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.map.PolygonMapObject;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.mapkit.search.Response;
+import com.yandex.mapkit.search.SearchFactory;
+import com.yandex.mapkit.search.SearchManager;
+import com.yandex.mapkit.search.SearchManagerType;
 import com.yandex.mapkit.search.SearchMetadata;
 import com.yandex.mapkit.search.SearchOptions;
+import com.yandex.mapkit.search.Session;
 import com.yandex.mapkit.user_location.UserLocationLayer;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
-import com.yandex.runtime.image.ImageProvider;
-import com.yandex.mapkit.search.SearchManager;
-import com.yandex.mapkit.search.SearchFactory;
-import com.yandex.mapkit.search.SearchManagerType;
-import com.yandex.mapkit.search.Session;
 import com.yandex.runtime.Error;
+import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
-import com.yandex.mapkit.GeoObjectCollection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -236,12 +235,12 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     }
 
     @ReactProp(name = PROP_ON_LOCATION_SEARCH)
-    public void setShouldSearchLocation(MapView view, @Nullable Callback shouldSearch) {
+    public void setShouldSearchLocation(MapView view, @Nullable ReadableMap shouldSearch) {
         shouldSearchLocation = shouldSearch != null;
     }
 
     @ReactProp(name = PROP_ON_MAP_PRESS)
-    public void setShouldSendOnMapPress(MapView view, @Nullable Callback shouldSend) {
+    public void setShouldSendOnMapPress(MapView view, @Nullable ReadableMap shouldSend) {
         shouldSendOnMapPress = shouldSend != null;
     }
 
