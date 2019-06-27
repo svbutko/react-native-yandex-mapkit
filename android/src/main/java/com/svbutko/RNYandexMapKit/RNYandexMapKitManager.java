@@ -37,6 +37,7 @@ import com.yandex.mapkit.geometry.LinearRing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -57,9 +58,11 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final String PROP_POLYGONS = "polygons";
 
     private UserLocationLayer userLocationLayer;
-
     private ThemedReactContext context = null;
     private MapView mapView = null;
+
+    private List<PolygonMapObject> polygonsList = new ArrayList<PolygonMapObject>();
+    private List<PlacemarkMapObject> markersList = new ArrayList<PlacemarkMapObject>();
 
     //TODO: add icon prop
     private byte[] imageDecodedString = Base64.decode("iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS40E0BoxAAAAkhJREFUWEftl79O40AQxv0OkMROZCAHytsc75AKIfEOQEFDAz21BQ0F0h05TgEhCoKERIEQgoIKJCr665b5otkwux4HW7FJcVj6SZv5832eOI7XgTFmKqhBn4uZmZjo9prRzsHS/HHSWbgiHpNO+wFrxJBDDWo1DR81aIHI37C+/SdqvNHa5AG16KH12BNQg2g6q9XWe80wt6EPeqFBa/UEUgEUnoSNnhSZBNZKmTsfUPC7FV3LxjJgTcfcMe1FjXPZUCasPTIfmfYb9UNZWAXsMTS3xrgN1OIK6A6NaRHTL/DSS2bS/9E2g7VV87C5MQRrxLRaDfaKC017t7Ji/r280Am7B2LIaT0ZdAM6g10l4dBfbJvXJFFN7YEcalCraUjgGRw3w1ctKYFg3gO1moYEnviq1aRlsPxz7KT+gVr0aFqST42LTGuPPFN/G6f4/4yn9qsGRabOMy0I6Fn5qCUkZf9zwTM4rde2tKRGWf/V8MRXXeiROOnTienCmLY74Y2XqAz2iqe3EWBjbPLuvILSYY+Prc8XTj2c1jfGFujCKywN1nZ3mcK8yqlH0wLfmF5dZve9holhTX1Db0EBbU0GsnESWMsxBc4HCwqLvCFmwRopU5AKWKihjOvtXFeJGgTUhOt94AnlhnvVaYEatKDxJCr+yso9maZADUogwK+ZqokP1441BWrQB0IkeC8NNLjmU1OgBjUg+KsVPUkjCedymQI1mAWE6b58loaAY7lNgRocBwyO5lp7Sad9C47i5l5RU6AGq8cE77senOxoWv4fAAAAAElFTkSuQmCC", Base64.DEFAULT);
@@ -170,24 +173,31 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     @ReactProp(name = PROP_POLYGONS)
     public void setPolygons(MapView view, ReadableArray polygons) {
-        if (polygons != null) {
-            ArrayList<Point> rectPoints = new ArrayList<>();
+        this.clearPolygons(view);
 
+        if (polygons != null) {
             for (int i = 0; i < polygons.size(); i++) {
                 ReadableMap polygon = polygons.getMap(i);
-                ReadableMap latLng = polygon.getMap("coordinate");
-                double latitude = latLng.getDouble("latitude");
-                double longitude = latLng.getDouble("longitude");
+                ReadableArray points = polygon.getArray("points");
 
-                Point point = new Point(latitude, longitude);
-                rectPoints.add(point);
+                ArrayList<Point> rectPoints = new ArrayList<>();
+
+                for (int j = 0; j < points.size(); j++) {
+                    ReadableMap latLng = points.getMap(j);
+                    double latitude = latLng.getDouble("latitude");
+                    double longitude = latLng.getDouble("longitude");
+
+                    Point point = new Point(latitude, longitude);
+                    rectPoints.add(point);
+                }
+
+                PolygonMapObject rect = view.getMap().getMapObjects().addPolygon(new Polygon(new LinearRing(rectPoints), new ArrayList<LinearRing>()));
+                polygonsList.add(rect);
+
+                rect.setStrokeColor(Color.rgb(0, 148, 113));
+                rect.setStrokeWidth(1.0f);
+                rect.setFillColor(Color.argb(85, 0, 148, 113));
             }
-
-            PolygonMapObject rect = view.getMap().getMapObjects().addPolygon(new Polygon(new LinearRing(rectPoints), new ArrayList<LinearRing>()));
-
-            rect.setStrokeColor(Color.rgb(0, 148, 113));
-            rect.setStrokeWidth(1.0f);
-            rect.setFillColor(Color.argb(85, 0, 148, 113));
         }
     }
 
@@ -205,6 +215,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     @ReactProp(name = PROP_MARKERS)
     public void setMarkers(MapView view, ReadableArray markers) {
+        this.clearMarkers(view);
+
         if (markers != null) {
             for (int i = 0; i < markers.size(); i++) {
                 ReadableMap marker = markers.getMap(i);
@@ -214,19 +226,40 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 double latitude = latLng.getDouble("latitude");
                 double longitude = latLng.getDouble("longitude");
 
-                boolean dragable = marker.hasKey("draggable") && marker.getBoolean("draggable");
+                boolean draggable = marker.hasKey("draggable") && marker.getBoolean("draggable");
                 Object userData = marker.hasKey("userData") ? marker.getMap("userData") : new Object();
 
                 Point point = new Point(latitude, longitude);
                 PlacemarkMapObject mark = view.getMap().getMapObjects().addPlacemark(point);
+                markersList.add(mark);
 
                 mark.setOpacity(opacity);
                 mark.setIcon(ImageProvider.fromBitmap(image));
-                mark.setDraggable(dragable);
+                mark.setDraggable(draggable);
                 mark.setUserData(userData);
                 mark.addTapListener(this::onMarkerPress);
             }
         }
+    }
+
+    public void clearMarkers(MapView view) {
+        MapObjectCollection mapObjects = view.getMap().getMapObjects();
+
+        for (PlacemarkMapObject marker : markersList) {
+            mapObjects.remove(marker);
+        }
+
+        markersList.clear();
+    }
+
+    public void clearPolygons(MapView view) {
+        MapObjectCollection mapObjects = view.getMap().getMapObjects();
+
+        for (PolygonMapObject polygon : polygonsList) {
+            mapObjects.remove(polygon);
+        }
+
+        polygonsList.clear();
     }
 
     @Override
