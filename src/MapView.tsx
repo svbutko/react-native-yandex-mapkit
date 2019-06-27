@@ -38,14 +38,6 @@ export class MapView extends Component<MapViewProps> {
         );
     }
 
-    public zoomOut(): void {
-        UIManager.dispatchViewManagerCommand(
-            findNodeHandle(this),
-            UIManager.RNYandexMapKit.Commands.zoomOut,
-            [],
-        );
-    }
-
     public animateToRegion(region: Region): void {
         UIManager.dispatchViewManagerCommand(
             findNodeHandle(this),

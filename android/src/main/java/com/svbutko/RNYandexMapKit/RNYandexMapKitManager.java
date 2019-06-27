@@ -265,6 +265,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     @Override
     public void onObjectAdded(UserLocationView userLocationView) {
         userLocationView.getPin().setIcon(ImageProvider.fromBitmap(locationImage));
+        userLocationView.getArrow().setIcon(ImageProvider.fromBitmap(locationImage));
         userLocationView.getAccuracyCircle().setFillColor(Color.TRANSPARENT);
     }
 
