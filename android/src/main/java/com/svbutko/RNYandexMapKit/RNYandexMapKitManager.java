@@ -138,7 +138,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 sendNativeEvent(PROP_ON_MAP_PRESS, writableMap, mapView.getId(), context);
             }
             if(shouldSearchLocation) {
-                searchSession.cancel();
                 searchSession = searchManager.submit(point, 16, new SearchOptions(), searchListener);
             }
         }
