@@ -293,8 +293,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 }
             }
 
-            writableMap.putString("latitude", Double.toString(point.getLatitude()));
-            writableMap.putString("longitude", Double.toString(point.getLongitude()));
+            writableMap.putDouble("latitude", point.getLatitude());
+            writableMap.putDouble("longitude", point.getLongitude());
 
             sendNativeEvent(PROP_ON_MARKER_PRESS, writableMap, mapView.getId(), context);
             return true;
