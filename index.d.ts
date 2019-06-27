@@ -11,6 +11,8 @@ declare module "react-native-yandex-mapkit" {
         onMarkerPress?: (userData: Object, coordinates: LatLng) => void;
         // tslint:disable-next-line:no-any
         onMapPress?: (data: any) => void;
+        // tslint:disable-next-line:no-any
+        onLocationSearch?: (data: any) => void;
         followUserLocation?: boolean;
         style?: StyleProp<ViewStyle>;
     }
