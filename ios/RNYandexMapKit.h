@@ -5,7 +5,7 @@
 #import <React/RCTBridgeModule.h>
 #endif
 
-@interface RNReactNativeYandexMapkit : NSObject <RCTBridgeModule>
+@interface RNYandexMapKit : NSObject <RCTBridgeModule>
 
 @end
   
