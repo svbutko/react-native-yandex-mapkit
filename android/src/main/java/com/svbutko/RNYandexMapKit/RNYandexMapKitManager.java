@@ -83,7 +83,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     private List<PlacemarkMapObject> markersList = new ArrayList<PlacemarkMapObject>();
     private PlacemarkMapObject userSearchPlacemark;
 
-    //TODO: add icon prop
+    //TODO: Add icon prop
     private byte[] imageDecodedString = Base64.decode("iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS40E0BoxAAAAkhJREFUWEftl79O40AQxv0OkMROZCAHytsc75AKIfEOQEFDAz21BQ0F0h05TgEhCoKERIEQgoIKJCr665b5otkwux4HW7FJcVj6SZv5832eOI7XgTFmKqhBn4uZmZjo9prRzsHS/HHSWbgiHpNO+wFrxJBDDWo1DR81aIHI37C+/SdqvNHa5AG16KH12BNQg2g6q9XWe80wt6EPeqFBa/UEUgEUnoSNnhSZBNZKmTsfUPC7FV3LxjJgTcfcMe1FjXPZUCasPTIfmfYb9UNZWAXsMTS3xrgN1OIK6A6NaRHTL/DSS2bS/9E2g7VV87C5MQRrxLRaDfaKC017t7Ji/r280Am7B2LIaT0ZdAM6g10l4dBfbJvXJFFN7YEcalCraUjgGRw3w1ctKYFg3gO1moYEnviq1aRlsPxz7KT+gVr0aFqST42LTGuPPFN/G6f4/4yn9qsGRabOMy0I6Fn5qCUkZf9zwTM4rde2tKRGWf/V8MRXXeiROOnTienCmLY74Y2XqAz2iqe3EWBjbPLuvILSYY+Prc8XTj2c1jfGFujCKywN1nZ3mcK8yqlH0wLfmF5dZve9holhTX1Db0EBbU0GsnESWMsxBc4HCwqLvCFmwRopU5AKWKihjOvtXFeJGgTUhOt94AnlhnvVaYEatKDxJCr+yso9maZADUogwK+ZqokP1441BWrQB0IkeC8NNLjmU1OgBjUg+KsVPUkjCedymQI1mAWE6b58loaAY7lNgRocBwyO5lp7Sad9C47i5l5RU6AGq8cE77senOxoWv4fAAAAAElFTkSuQmCC", Base64.DEFAULT);
     private Bitmap image = BitmapFactory.decodeByteArray(imageDecodedString, 0, imageDecodedString.length);
 
@@ -219,8 +219,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     public void animatedToCoordinates(Point point) {
         mapView.getMap().move(
-                new CameraPosition(point, 18.0f, 0.0f, 0.0f),
-                new Animation(Animation.Type.SMOOTH, 5),
+                new CameraPosition(point, mapView.getMap().getCameraPosition().getZoom(), 0.0f, 0.0f),
+                new Animation(Animation.Type.SMOOTH, 1),
                 null);
     }
 
@@ -335,7 +335,11 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         MapObjectCollection mapObjects = view.getMap().getMapObjects();
 
         for (PlacemarkMapObject marker : markersList) {
-            mapObjects.remove(marker);
+            try {
+                mapObjects.remove(marker);
+            } catch (Exception e) {
+                //TODO: Solve the error
+            }
         }
 
         markersList.clear();
@@ -345,7 +349,11 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         MapObjectCollection mapObjects = view.getMap().getMapObjects();
 
         for (PolygonMapObject polygon : polygonsList) {
-            mapObjects.remove(polygon);
+            try {
+                mapObjects.remove(polygon);
+            } catch (Exception e) {
+                //TODO: Solve the error
+            }
         }
 
         polygonsList.clear();
