@@ -11,6 +11,7 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_VIEW_PROPERTY(onLocationSearch, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onMapPress, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onLocationError, RCTBubblingEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onMarkerPress, RCTBubblingEventBlock)
 
 RCT_CUSTOM_VIEW_PROPERTY(searchLocation, BOOL, RNYandexMapKitView) {
     if (json == @(YES)) {
@@ -22,13 +23,16 @@ RCT_CUSTOM_VIEW_PROPERTY(searchLocation, BOOL, RNYandexMapKitView) {
 
 RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
 {
-    double latitude = [[json valueForKey:@"latitude"] doubleValue];
-    double longitude = [[json valueForKey:@"longitude"] doubleValue];
-    BOOL draggable =  [[json valueForKey:@"draggable"] boolValue];
+    [view clearMarkers];
 
-    YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
+    for (NSDictionary *jsMarker in json) {
+        NSDictionary *coordinates = [jsMarker objectForKey:@"coordinate"];
 
-    if (latitude != 0 && longitude != 0) {
+        double latitude = [[coordinates valueForKey:@"latitude"] doubleValue];
+        double longitude = [[coordinates valueForKey:@"longitude"] doubleValue];
+
+        YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
+
         NSDictionary* addMarkerJSON =
         @{
           RNYandexMapKitView.addressKey:

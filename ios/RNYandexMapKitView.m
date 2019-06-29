@@ -21,6 +21,9 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 {
     self = [super init];
 
+    _mapPolygons = [[NSMutableArray alloc]init];
+    _mapMarkers = [[NSMutableArray alloc]init];
+
     _map = [[YMKMapView alloc] initWithFrame:self.bounds];
     _map.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
@@ -80,7 +83,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
                                              }
 
                                              id errorInfo = [NSNull null];
-                                             if (error != nil) { errorInfo = error.localizedDescription; }
+                                             if (error != nil) { errorInfo =error.localizedDescription; }
 
                                              NSDictionary* addressDict = @{
                                                                            @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],
@@ -106,7 +109,6 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
     }
 }
 
-
 - (void) onMapLongTapWithMap:(YMKMap *)map point:(nonnull YMKPoint *)point
 {
     [self onMapTapWithMap:map point:point];
@@ -122,11 +124,42 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
     if (customPoint == nil) { return; }
 
     YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
-    [mapObjects clear];
     YMKPoint* point = [YMKPoint pointWithLatitude:customPoint.latitude longitude:customPoint.longitude];
     YMKPlacemarkMapObject* placemark = [mapObjects addPlacemarkWithPoint:point];
 
+    [_mapMarkers addObject:placemark];
+
     [placemark setIconWithImage: customPoint.icon];
+    [placemark setOpacity: 1];
+    [placemark setDraggable: false];
+}
+
+- (void) clearMarkers {
+    YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
+
+    for (YMKPlacemarkMapObject* marker in _mapMarkers) {
+        @try {
+            [mapObjects removeWithMapObject:marker];
+        } @catch (NSException *exception) {
+            //TODO: Solve the error
+        }
+    }
+
+    [_mapMarkers removeAllObjects];
+}
+
+- (void) clearPolygons {
+    YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
+
+    for (YMKPlacemarkMapObject* polygon in _mapPolygons) {
+        @try {
+            [mapObjects removeWithMapObject:polygon];
+        } @catch (NSException *exception) {
+            //TODO: Solve the error
+        }
+    }
+
+    [_mapPolygons removeAllObjects];
 }
 
 - (void) setSearchLocation: (BOOL)json {
