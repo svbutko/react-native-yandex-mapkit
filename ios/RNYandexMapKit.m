@@ -13,7 +13,7 @@
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(setApiKey: (nonnull NSString *) apiKey) {
-    [YMKMapKit setApiKey: @apiKey];
+    [YMKMapKit setApiKey: apiKey];
 }
 
 @end

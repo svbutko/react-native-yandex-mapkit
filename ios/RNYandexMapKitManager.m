@@ -14,29 +14,25 @@ RCT_EXPORT_VIEW_PROPERTY(onLocationError, RCTBubblingEventBlock);
 
 RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
 {
-    for (id marker in markers) {
-        double latitude = [[json valueForKey:@"latitude"] doubleValue];
-        double longitude = [[json valueForKey:@"longitude"] doubleValue];
-        BOOL draggable =  [[json valueForKey:@"draggable"] boolValue];
+    double latitude = [[json valueForKey:@"latitude"] doubleValue];
+    double longitude = [[json valueForKey:@"longitude"] doubleValue];
+    BOOL draggable =  [[json valueForKey:@"draggable"] boolValue];
 
-        YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
-    }
+    YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
 
-    if (lat != 0 && lon != 0) {
-        if (userLoc == NO) {
-            NSDictionary* addMarkerJSON =
-            @{
-              RNYandexMapKitView.addressKey:
-                  @{
-                      @"id": @"initialAddress",
-                      @"latitude": [NSString stringWithFormat:@"%f", point.latitude],
-                      @"longitude": [NSString stringWithFormat:@"%f", point.longitude],
-                      },
-              RNYandexMapKitView.iconKey: RNYandexMapKitView.iconImage
-              };
+    if (latitude != 0 && longitude != 0) {
+        NSDictionary* addMarkerJSON =
+        @{
+          RNYandexMapKitView.addressKey:
+              @{
+                  @"id": @"initialAddress",
+                  @"latitude": [NSString stringWithFormat:@"%f", point.latitude],
+                  @"longitude": [NSString stringWithFormat:@"%f", point.longitude],
+                  },
+          RNYandexMapKitView.iconKey: RNYandexMapKitView.iconImage
+          };
 
-            [view addMarkerWithJSON: addMarkerJSON];
-        }
+        [view addMarkerWithJSON: addMarkerJSON];
     }
 }
 

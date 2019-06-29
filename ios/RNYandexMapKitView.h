@@ -9,6 +9,8 @@
 #import <YandexMapKit/YMKUserLocationView.h>
 #import <YandexMapKit/YMKMapCameraListener.h>
 #import <CoreLocation/CoreLocation.h>
+#import <YandexMapKitSearch/YMKSearchManager.h>
+#import <YandexMapKitSearch/YMKSearchSession.h>
 #import "NSStringCategory.h"
 #import "WSPoint.h"
 

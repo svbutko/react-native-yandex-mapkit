@@ -29,7 +29,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 
     [self addSubview:_map];
 
-    _searchManager = [YMKMapKit.sharedInstance createSearchManagerWithSearchManagerType:YMKSearchSearchManagerTypeCombined];
+    _searchManager = [YMKSearch.sharedInstance createSearchManagerWithSearchManagerType:YMKSearchSearchManagerTypeCombined];
 
     self.locationManager = [CLLocationManager new];
     self.locationManager.delegate = self;
@@ -60,7 +60,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 }
 
 
-- (void) onMapTapWithMap:(nullable YMKMap *)map point:(nonnull YMKPoint *)point
+- (void) onMapTapWithMap:(YMKMap *)map point:(nonnull YMKPoint *)point
 {
     self.onMapTapped(@{});
 
@@ -100,7 +100,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 }
 
 
-- (void) onMapLongTapWithMap:(nullable YMKMap *)map point:(nonnull YMKPoint *)point
+- (void) onMapLongTapWithMap:(YMKMap *)map point:(nonnull YMKPoint *)point
 {
     [self onMapTapWithMap:map point:point];
 }
@@ -145,7 +145,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 - (void) zoomIn {
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         YMKPoint* point = self.map.mapWindow.map.cameraPosition.target;
-        float* zoom = self.map.mapWindow.cameraPosition.zoom + 2;
+        float zoom = self.map.mapWindow.map.cameraPosition.zoom + 2;
 
         YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:zoom azimuth:0 tilt:0];
         YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
@@ -157,7 +157,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 - (void) zoomOut {
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         YMKPoint* point = self.map.mapWindow.map.cameraPosition.target;
-        float* zoom = self.map.mapWindow.cameraPosition.zoom - 2;
+        float zoom = self.map.mapWindow.map.cameraPosition.zoom - 2;
 
         YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:zoom azimuth:0 tilt:0];
         YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
@@ -181,7 +181,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 }
 
 
-- (void)onObjectAddedWithView:(nullable YMKUserLocationView *)view
+- (void)onObjectAddedWithView:(YMKUserLocationView *)view
 {
     [view.pin setIconWithImage: _userLocationIcon];
     [view.arrow setIconWithImage: _userLocationIcon];
@@ -189,13 +189,13 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 }
 
 
-- (void)onObjectRemovedWithView:(nullable YMKUserLocationView *)view { }
+- (void)onObjectRemovedWithView:(YMKUserLocationView *)view { }
 
 
-- (void)onObjectUpdatedWithView:(nullable YMKUserLocationView *)view event:(nullable YMKObjectEvent *)event { }
+- (void)onObjectUpdatedWithView:(YMKUserLocationView *)view event:(YMKObjectEvent *)event { }
 
 
-- (void)onCameraPositionChangedWithMap:(nullable YMKMap *)map cameraPosition:(nonnull YMKCameraPosition *)cameraPosition cameraUpdateSource:(YMKCameraUpdateSource)cameraUpdateSource finished:(BOOL)finished
+- (void)onCameraPositionChangedWithMap:(YMKMap *)map cameraPosition:(nonnull YMKCameraPosition *)cameraPosition cameraUpdateSource:(YMKCameraUpdateSource)cameraUpdateSource finished:(BOOL)finished
 {
     _zoom = cameraPosition.zoom;
 
