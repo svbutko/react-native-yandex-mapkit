@@ -1,6 +1,6 @@
 
 #import "RNYandexMapKit.h"
-#import "YMKConfiguration.h"
+#import <YandexMapKit/YMKMapKitFactory.h>
 
 @implementation RNYandexMapKit
 
@@ -13,7 +13,7 @@
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(setApiKey: (nonnull NSString *) apiKey) {
-    [YMKConfiguration sharedInstance].apiKey = apiKey;
+    [YMKMapKit setApiKey: @apiKey];
 }
 
 @end
