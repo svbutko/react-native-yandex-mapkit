@@ -62,41 +62,48 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 
 - (void) onMapTapWithMap:(YMKMap *)map point:(nonnull YMKPoint *)point
 {
-    self.onMapPress(@{});
-
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 
-    YMKSearchOptions* options = [YMKSearchOptions new];
-    options.searchTypes = YMKSearchTypeGeo;
+    if (self.searchLocation) {
+        YMKSearchOptions* options = [YMKSearchOptions new];
+        options.searchTypes = YMKSearchTypeGeo;
 
-    _searchSession = [_searchManager submitWithPoint:point
-                                                zoom:@(_zoom)
-                                       searchOptions:options
-                                     responseHandler:^(YMKSearchResponse *response, NSError *error) {
+        _searchSession = [_searchManager submitWithPoint:point
+                                                    zoom:@(_zoom)
+                                           searchOptions:options
+                                         responseHandler:^(YMKSearchResponse *response, NSError *error) {
 
-                                         NSMutableArray* addressArray = [NSMutableArray new];
+                                             NSMutableArray* addressArray = [NSMutableArray new];
 
-                                         for (YMKGeoObjectCollectionItem* item in response.collection.children) {
-                                             [addressArray addObject:item.obj.name];
-                                         }
+                                             for (YMKGeoObjectCollectionItem* item in response.collection.children) {
+                                                 [addressArray addObject:item.obj.name];
+                                             }
 
-                                         id errorInfo = [NSNull null];
-                                         if (error != nil) { errorInfo = error.localizedDescription; }
+                                             id errorInfo = [NSNull null];
+                                             if (error != nil) { errorInfo = error.localizedDescription; }
 
-                                         NSDictionary* addressDict = @{
-                                                                       @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],
-                                                                       @"longitude" : [NSString stringWithFormat:@"%f", point.longitude],
-                                                                       addressKey: response.collection.children.firstObject.obj.name,
-                                                                       addressesKey: addressArray,
-                                                                       @"error": errorInfo
-                                                                       };
+                                             NSDictionary* addressDict = @{
+                                                                           @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],
+                                                                           @"longitude" : [NSString stringWithFormat:@"%f", point.longitude],
+                                                                           @"location": response.collection.children.firstObject.obj.name,
+                                                                           @"locationArray": addressArray,
+                                                                           @"error": errorInfo
+                                                                           };
 
-                                         NSLog(@"onMapPress with output info: %@", addressDict);
+                                             NSLog(@"onLocationSearch with output info: %@", addressDict);
 
-                                         self.onPointChanged(addressDict);
-                                     }];
+                                             self.onLocationSearch(addressDict);
+                                         }];
 
+    } else {
+        NSDictionary* addressDict = @{
+                                      @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],
+                                      @"longitude" : [NSString stringWithFormat:@"%f", point.longitude]
+                                      };
 
+        NSLog(@"onMapPress with output info: %@", addressDict);
+        self.onMapPress(addressDict);
+    }
 }
 
 
@@ -104,7 +111,6 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 {
     [self onMapTapWithMap:map point:point];
 }
-
 
 - (void) addMarkerWithJSON: (id)json {
     NSDictionary* dict = nil;
@@ -123,6 +129,9 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
     [placemark setIconWithImage: customPoint.icon];
 }
 
+- (void) setSearchLocation: (BOOL)json {
+    self.searchLocation = json;
+}
 
 - (void) navigateToUserLocation {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];

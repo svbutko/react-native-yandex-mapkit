@@ -16,7 +16,7 @@
 
 @interface RNYandexMapKitView : RCTView <YMKUserLocationObjectListener, YMKMapInputListener, CLLocationManagerDelegate, YMKMapCameraListener>
 
-@property (nonatomic, copy) RCTBubblingEventBlock onPointChanged;
+@property (nonatomic, copy) RCTBubblingEventBlock onLocationSearch;
 @property (nonatomic, copy) RCTBubblingEventBlock onLocationError;
 @property (nonatomic, copy) RCTBubblingEventBlock onMapPress;
 @property (strong, nonatomic) YMKSearchManager* searchManager;
@@ -24,6 +24,7 @@
 @property (nonatomic) CLLocationManager* locationManager;
 @property (nonatomic, copy) NSArray* markers;
 @property (nonatomic, copy) NSArray* polygons;
+@property (nonatomic) BOOL searchLocation;
 
 @property (nonatomic) YMKMapView *map;
 @property (nonatomic) float zoom;
@@ -36,6 +37,7 @@
 + (NSString*) locationImage;
 
 - (void) addMarkerWithJSON: (id)json;
+- (void) setSearchLocation: (BOOL)json;
 
 - (void) navigateToUserLocation;
 - (void) zoomIn;

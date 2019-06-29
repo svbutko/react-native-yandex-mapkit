@@ -8,9 +8,13 @@
 
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_VIEW_PROPERTY(onPointChanged, RCTBubblingEventBlock);
+RCT_EXPORT_VIEW_PROPERTY(onLocationSearch, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onMapPress, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onLocationError, RCTBubblingEventBlock);
+
+RCT_CUSTOM_VIEW_PROPERTY(searchLocation, BOOL, RNYandexMapKitView) {
+    [view setSearchLocation: json];
+};
 
 RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
 {
