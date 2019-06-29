@@ -134,6 +134,26 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
     [placemark setDraggable: false];
 }
 
+- (void) addPolygon: (NSMutableArray*)rectPoints {
+    YMKPolygon *jsPolygon = [YMKPolygon polygonWithOuterRing:[YMKLinearRing linearRingWithPoints:rectPoints] innerRings:[[NSMutableArray alloc]init]];
+
+    YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
+    YMKPolygonMapObject* polygon = [mapObjects addPolygonWithPolygon:jsPolygon];
+
+    [_mapPolygons addObject:polygon];
+
+    [polygon setStrokeColor:[UIColor colorWithRed:0.0f/255.0f
+                                             green:148.0f/255.0f
+                                              blue:113.0f/255.0f
+                                             alpha:1.0f]];
+
+    [polygon setStrokeWidth:1.0f];
+    [polygon setFillColor:[UIColor colorWithRed:0.0f/255.0f
+                                          green:148.0f/255.0f
+                                           blue:113.0f/255.0f
+                                          alpha:0.3f]];
+}
+
 - (void) clearMarkers {
     YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
 

@@ -41,6 +41,7 @@
 + (NSString*) locationImage;
 
 - (void) addMarkerWithJSON: (id)json;
+- (void) addPolygon: (NSMutableArray*)rectPoints;
 - (void) setSearchLocation: (BOOL)json;
 
 - (void) navigateToUserLocation;

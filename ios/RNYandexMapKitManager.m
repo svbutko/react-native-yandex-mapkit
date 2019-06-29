@@ -48,6 +48,27 @@ RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
     }
 }
 
+RCT_CUSTOM_VIEW_PROPERTY(polygons, NSArray, RNYandexMapKitView)
+{
+    [view clearPolygons];
+
+    for (NSDictionary *jsPolygon in json) {
+        NSMutableArray *points = [jsPolygon mutableArrayValueForKey:@"points"];
+
+        NSMutableArray *rectPoints = [[NSMutableArray alloc]init];
+
+        for (NSDictionary *point in points) {
+            double latitude = [[point valueForKey:@"latitude"] doubleValue];
+            double longitude = [[point valueForKey:@"longitude"] doubleValue];
+
+            YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
+            [rectPoints addObject:point];
+        }
+
+        [view addPolygon:rectPoints];
+    }
+}
+
 
 RCT_EXPORT_METHOD(animateToRegion)
 {
