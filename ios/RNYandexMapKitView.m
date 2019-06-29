@@ -62,7 +62,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 
 - (void) onMapTapWithMap:(YMKMap *)map point:(nonnull YMKPoint *)point
 {
-    self.onMapTapped(@{});
+    self.onMapPress(@{});
 
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 
@@ -91,7 +91,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
                                                                        @"error": errorInfo
                                                                        };
 
-                                         NSLog(@"onMapTapped with output info: %@", addressDict);
+                                         NSLog(@"onMapPress with output info: %@", addressDict);
 
                                          self.onPointChanged(addressDict);
                                      }];

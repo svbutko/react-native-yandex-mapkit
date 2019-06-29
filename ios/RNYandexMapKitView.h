@@ -18,7 +18,7 @@
 
 @property (nonatomic, copy) RCTBubblingEventBlock onPointChanged;
 @property (nonatomic, copy) RCTBubblingEventBlock onLocationError;
-@property (nonatomic, copy) RCTBubblingEventBlock onMapTapped;
+@property (nonatomic, copy) RCTBubblingEventBlock onMapPress;
 @property (strong, nonatomic) YMKSearchManager* searchManager;
 @property (nonatomic) YMKSearchSession* searchSession;
 @property (nonatomic) CLLocationManager* locationManager;
