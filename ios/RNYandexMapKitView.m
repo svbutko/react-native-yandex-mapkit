@@ -64,7 +64,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 {
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 
-    if (self.searchLocation) {
+    if (_searchLocation) {
         YMKSearchOptions* options = [YMKSearchOptions new];
         options.searchTypes = YMKSearchTypeGeo;
 
@@ -130,7 +130,7 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 }
 
 - (void) setSearchLocation: (BOOL)json {
-    self.searchLocation = json;
+    _searchLocation = json;
 }
 
 - (void) navigateToUserLocation {

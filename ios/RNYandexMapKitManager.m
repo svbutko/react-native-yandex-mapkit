@@ -13,7 +13,11 @@ RCT_EXPORT_VIEW_PROPERTY(onMapPress, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onLocationError, RCTBubblingEventBlock);
 
 RCT_CUSTOM_VIEW_PROPERTY(searchLocation, BOOL, RNYandexMapKitView) {
-    [view setSearchLocation: json];
+    if (json == @(YES)) {
+        [view setSearchLocation: true];
+    } else {
+        [view setSearchLocation: false];
+    }
 };
 
 RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
