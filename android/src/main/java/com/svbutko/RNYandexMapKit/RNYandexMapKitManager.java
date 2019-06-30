@@ -137,13 +137,11 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     private InputListener inputListener = new InputListener() {
         @Override
         public void onMapTap(@NonNull com.yandex.mapkit.map.Map map, @NonNull Point point) {
-            if(shouldSendOnMapPress) {
-                WritableMap writableMap = Arguments.createMap();
-                writableMap.putString("latitude", Double.toString(point.getLatitude()));
-                writableMap.putString("longitude", Double.toString(point.getLongitude()));
+            WritableMap writableMap = Arguments.createMap();
+            writableMap.putString("latitude", Double.toString(point.getLatitude()));
+            writableMap.putString("longitude", Double.toString(point.getLongitude()));
 
-                sendNativeEvent(PROP_ON_MAP_PRESS, writableMap, mapView.getId(), context);
-            }
+            sendNativeEvent(PROP_ON_MAP_PRESS, writableMap, mapView.getId(), context);
             if(shouldSearchLocation) {
                 if (searchSession != null) {
                     searchSession.cancel();
