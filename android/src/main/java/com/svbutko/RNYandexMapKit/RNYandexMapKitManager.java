@@ -131,7 +131,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                             //TODO: Solve the error
                         }
                     }
-                    userSearchPlacemark = mapObjects.addPlacemark(resultLocation, locationImage);
+                    userSearchPlacemark = mapObjects.addPlacemark(resultLocation, userLocationImage);
                     WritableMap writableMap = Arguments.createMap();
                     SearchMetadata metadata = response.getMetadata();
 
@@ -292,7 +292,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             double latitude = latLng.getDouble("latitude");
             double longitude = latLng.getDouble("longitude");
 
-            userSearchPlacemark = mapObjects.addPlacemark(new Point(latitude, longitude), locationImage);
+            userSearchPlacemark = mapObjects.addPlacemark(new Point(latitude, longitude), userLocationImage);
         }
     }
 
