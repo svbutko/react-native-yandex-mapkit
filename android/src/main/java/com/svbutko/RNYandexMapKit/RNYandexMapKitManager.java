@@ -41,6 +41,8 @@ import com.yandex.mapkit.user_location.UserLocationLayer;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
 import com.yandex.runtime.Error;
+import com.yandex.runtime.i18n.I18nManagerFactory;
+import com.yandex.runtime.i18n.LocaleUpdateListener;
 import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
@@ -131,6 +133,18 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
     };
 
+    private LocaleUpdateListener localeUpdateListener = new LocaleUpdateListener() {
+        @Override
+        public void onLocaleUpdated() {
+
+        }
+
+        @Override
+        public void onLocaleUpdateError(@NonNull Error error) {
+
+        }
+    };
+
     private InputListener inputListener = new InputListener() {
         @Override
         public void onMapTap(@NonNull com.yandex.mapkit.map.Map map, @NonNull Point point) {
@@ -162,6 +176,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public MapView createViewInstance(ThemedReactContext context) {
         RNYandexMapKitModule nativeModule = context.getNativeModule(RNYandexMapKitModule.class);
 
+        String locale = nativeModule.getLocale();
+
+        I18nManagerFactory.setLocale(locale != null ? locale : "ru", localeUpdateListener);
         MapKitFactory.setApiKey(nativeModule.getApiKey());
         MapKitFactory.initialize(context);
         SearchFactory.initialize(context);
