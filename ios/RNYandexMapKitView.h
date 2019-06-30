@@ -14,7 +14,7 @@
 #import "NSStringCategory.h"
 #import "WSPoint.h"
 
-@interface RNYandexMapKitView : RCTView <YMKUserLocationObjectListener, YMKMapInputListener, CLLocationManagerDelegate, YMKMapCameraListener>
+@interface RNYandexMapKitView : RCTView <YMKUserLocationObjectListener, YMKMapInputListener, CLLocationManagerDelegate, YMKMapCameraListener, YMKMapObjectTapListener>
 
 @property (nonatomic, copy) RCTBubblingEventBlock onLocationSearch;
 @property (nonatomic, copy) RCTBubblingEventBlock onLocationError;
