@@ -178,7 +178,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
         String locale = nativeModule.getLocale();
 
-        I18nManagerFactory.setLocale(locale != null ? locale : "ru", localeUpdateListener);
+        if (locale != null) {
+            I18nManagerFactory.setLocale(locale, localeUpdateListener);
+        }
         MapKitFactory.setApiKey(nativeModule.getApiKey());
         MapKitFactory.initialize(context);
         SearchFactory.initialize(context);
