@@ -235,7 +235,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
         @Override
         public void onDrivingRoutesError(@NonNull Error error) {
-
         }
     };
 
@@ -276,29 +275,38 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         return mapView;
     }
 
-    @ReactProp(name = PROP_SEARCH_ROUTE, defaultBoolean = false)
-    public void setSearchRoute(MapView view, boolean shouldSearch) {
-        if (shouldSearch) {
-            submitRouteRequest();
+    @ReactProp(name = PROP_SEARCH_ROUTE)
+    public void setSearchRoute(MapView view, ReadableArray markers) {
+        if (markers.size() == 2) {
+            ArrayList<Point> points = new ArrayList<>();
+
+            for (int i = 0; i < markers.size(); i++) {
+                ReadableMap marker = markers.getMap(i);
+                ReadableMap latLng = marker.getMap("coordinate");
+                double latitude = latLng.getDouble("latitude");
+                double longitude = latLng.getDouble("longitude");
+
+                points.add(new Point(latitude, longitude));
+            }
+
+            submitRouteRequest(points);
         }
     }
 
-    private void submitRouteRequest() {
-        if(markersList.size() == 2) {
-            try {
-                DrivingOptions options = new DrivingOptions();
-                ArrayList<RequestPoint> requestPoints = new ArrayList<>();
+    private void submitRouteRequest(ArrayList<Point> points) {
+        try {
+            DrivingOptions options = new DrivingOptions();
+            ArrayList<RequestPoint> requestPoints = new ArrayList<>();
 
-                Point firstPoint = markersList.get(0).getGeometry();
-                Point secondPoint = markersList.get(1).getGeometry();
+            Point firstPoint = points.get(0);
+            Point secondPoint = points.get(1);
 
-                requestPoints.add(new RequestPoint(firstPoint, RequestPointType.WAYPOINT, null));
-                requestPoints.add(new RequestPoint(secondPoint, RequestPointType.WAYPOINT, null));
+            requestPoints.add(new RequestPoint(firstPoint, RequestPointType.WAYPOINT, null));
+            requestPoints.add(new RequestPoint(secondPoint, RequestPointType.WAYPOINT, null));
 
-                drivingRouter.requestRoutes(requestPoints, options, drivingRouteListener);
-            } catch (Exception e) {
-                //TODO: Solve the error
-            }
+            drivingRouter.requestRoutes(requestPoints, options, drivingRouteListener);
+        } catch (Exception e) {
+            //TODO: Solve the error
         }
     }
 
