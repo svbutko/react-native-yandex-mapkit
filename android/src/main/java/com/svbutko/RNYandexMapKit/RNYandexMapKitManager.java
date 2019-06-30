@@ -225,8 +225,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
             clearPolylines(mapView);
 
-            for (DrivingRoute route : routes) {
-                PolylineMapObject polyline = mapObjects.addPolyline(route.getGeometry());
+            if(!routes.isEmpty()) {
+                PolylineMapObject polyline = mapObjects.addPolyline(routes.get(0).getGeometry());
                 polyline.setStrokeColor(Color.argb(153,194, 19, 19));
                 polyline.setOutlineWidth(0);
                 polylinesList.add(polyline);
