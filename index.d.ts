@@ -15,6 +15,7 @@ declare module "react-native-yandex-mapkit" {
         onLocationSearch?: (data: any) => void;
         searchLocation?: boolean;
         searchRoute?: MarkerProps[];
+        searchMarker?: MarkerProps;
         style?: StyleProp<ViewStyle>;
     }
 

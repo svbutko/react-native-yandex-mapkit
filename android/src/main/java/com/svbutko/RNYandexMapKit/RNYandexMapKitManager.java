@@ -79,6 +79,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final String PROP_ON_LOCATION_SEARCH = "onLocationSearch";
     public static final String PROP_SEARCH_LOCATION = "searchLocation";
     public static final String PROP_SEARCH_ROUTE = "searchRoute";
+    public static final String PROP_SEARCH_MARKER = "searchMarker";
 
     private UserLocationLayer userLocationLayer;
     private ThemedReactContext context = null;
@@ -273,6 +274,26 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         mapView.onStart();
 
         return mapView;
+    }
+
+    @ReactProp(name = PROP_SEARCH_MARKER)
+    public void setSearchMarker(MapView view, ReadableMap marker) {
+        if (marker != null) {
+            MapObjectCollection mapObjects = view.getMap().getMapObjects();
+
+            if (userSearchPlacemark != null) {
+                try {
+                    mapObjects.remove(userSearchPlacemark);
+                } catch (Exception e) {
+                    //TODO: Solve the error
+                }
+            }
+            ReadableMap latLng = marker.getMap("coordinate");
+            double latitude = latLng.getDouble("latitude");
+            double longitude = latLng.getDouble("longitude");
+
+            userSearchPlacemark = mapObjects.addPlacemark(new Point(latitude, longitude), locationImage);
+        }
     }
 
     @ReactProp(name = PROP_SEARCH_ROUTE)
