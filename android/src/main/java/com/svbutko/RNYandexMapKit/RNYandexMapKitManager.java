@@ -27,6 +27,7 @@ import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.InputListener;
 import com.yandex.mapkit.map.MapObject;
 import com.yandex.mapkit.map.MapObjectCollection;
+import com.yandex.mapkit.map.MapObjectTapListener;
 import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.map.PolygonMapObject;
 import com.yandex.mapkit.mapview.MapView;
@@ -145,6 +146,33 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
     };
 
+    private MapObjectTapListener mapObjectTapListener = new MapObjectTapListener() {
+        @Override
+        public boolean onMapObjectTap(@NonNull MapObject mapObject, @NonNull Point point) {
+            if (mapObject instanceof PlacemarkMapObject) {
+                WritableMap writableMap = Arguments.createMap();
+                Object userData = mapObject.getUserData();
+
+                if (userData != null) {
+                    try {
+                        MarkerUserData markerUserData = (MarkerUserData)userData;
+                        writableMap.putString("id", markerUserData.getId());
+                    }
+                    catch (Exception e) {
+
+                    }
+                }
+
+                writableMap.putDouble("latitude", point.getLatitude());
+                writableMap.putDouble("longitude", point.getLongitude());
+
+                sendNativeEvent(PROP_ON_MARKER_PRESS, writableMap, mapView.getId(), context);
+                return true;
+            }
+            return false;
+        }
+    };
+
     private InputListener inputListener = new InputListener() {
         @Override
         public void onMapTap(@NonNull com.yandex.mapkit.map.Map map, @NonNull Point point) {
@@ -216,7 +244,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public void zoomIn() {
         mapView.getMap().move(new CameraPosition(mapView.getMap().getCameraPosition().getTarget(),
                         mapView.getMap().getCameraPosition().getZoom()+2, 0.0f, 0.0f),
-                        new Animation(Animation.Type.SMOOTH, 1), null);
+                new Animation(Animation.Type.SMOOTH, 1), null);
     }
 
     public void zoomOut() {
@@ -292,33 +320,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
     }
 
-    public boolean onMarkerPress(MapObject mapObject, Point point) {
-        if (mapObject instanceof PlacemarkMapObject) {
-            WritableMap writableMap = Arguments.createMap();
-            Object userData = mapObject.getUserData();
-
-            if (userData != null) {
-                try {
-                    String id = userData.getClass().getField("id").toString();
-                    WritableMap resultData = Arguments.createMap();
-                    resultData.putString("id", id);
-
-                    writableMap.putMap("userData", resultData);
-                }
-                catch (Exception e) {
-
-                }
-            }
-
-            writableMap.putDouble("latitude", point.getLatitude());
-            writableMap.putDouble("longitude", point.getLongitude());
-
-            sendNativeEvent(PROP_ON_MARKER_PRESS, writableMap, mapView.getId(), context);
-            return true;
-        }
-        return false;
-    }
-
     @ReactProp(name = PROP_MARKERS)
     public void setMarkers(MapView view, ReadableArray markers) {
         this.clearMarkers(view);
@@ -333,7 +334,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 double longitude = latLng.getDouble("longitude");
 
                 boolean draggable = marker.hasKey("draggable") && marker.getBoolean("draggable");
-                Object userData = marker.hasKey("userData") ? marker.getMap("userData") : new Object();
 
                 Point point = new Point(latitude, longitude);
                 PlacemarkMapObject mark = view.getMap().getMapObjects().addPlacemark(point);
@@ -342,8 +342,11 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 mark.setOpacity(opacity);
                 mark.setIcon(ImageProvider.fromBitmap(image));
                 mark.setDraggable(draggable);
-                mark.setUserData(userData);
-                mark.addTapListener(this::onMarkerPress);
+                mark.addTapListener(mapObjectTapListener);
+
+                if (marker.hasKey("userData") && marker.getString("identifier") != null) {
+                    mark.setUserData(new MarkerUserData(marker.getString("identifier")));
+                }
             }
         }
     }
@@ -452,5 +455,22 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     private void sendNativeEvent(final String eventName, final WritableMap event, final int id, final ReactContext context) {
         context.getJSModule(RCTEventEmitter.class).receiveEvent(id, eventName, event);
+    }
+}
+
+class MarkerUserData {
+    private String id;
+
+    public MarkerUserData(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    @Override
+    public String toString() {
+        return "id: " + this.id;
     }
 }

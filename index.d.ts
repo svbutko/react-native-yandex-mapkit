@@ -1,5 +1,7 @@
 /*tslint:disable:interface-name*/
 
+import {MarkerData} from "react-native-yandex-mapkit";
+
 declare module "react-native-yandex-mapkit" {
     import React, {Component} from "react";
     import {StyleProp, ViewStyle, NativeSyntheticEvent, ImageURISource, ImageRequireSource, ViewProps} from "react-native";
@@ -8,7 +10,7 @@ declare module "react-native-yandex-mapkit" {
         markers?: MarkerProps[];
         polygons?: Polygon[];
         initialRegion?: Region;
-        onMarkerPress?: (data: any) => void;
+        onMarkerPress?: (data: MarkerData) => void;
         onMapPress?: (data: any) => void;
         onLocationSearch?: (data: any) => void;
         searchLocation?: boolean;
@@ -62,5 +64,9 @@ declare module "react-native-yandex-mapkit" {
         calloutOffset?: Point;
         draggable?: boolean;
         userData?: object;
+    }
+
+    export interface MarkerData extends LatLng {
+        id?: string;
     }
 }
