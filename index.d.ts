@@ -14,6 +14,7 @@ declare module "react-native-yandex-mapkit" {
         onMapPress?: (data: any) => void;
         onLocationSearch?: (data: any) => void;
         searchLocation?: boolean;
+        searchRoute?: boolean;
         style?: StyleProp<ViewStyle>;
     }
 
@@ -46,14 +47,6 @@ declare module "react-native-yandex-mapkit" {
         x: number;
         y: number;
     }
-
-    export interface MapEvent<T = {}>
-        extends NativeSyntheticEvent<
-            T & {
-            coordinate: LatLng;
-            position: Point;
-        }
-            > {}
 
     export interface MarkerProps {
         identifier?: string;

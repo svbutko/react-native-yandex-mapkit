@@ -19,6 +19,13 @@ import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.GeoObjectCollection;
 import com.yandex.mapkit.MapKitFactory;
+import com.yandex.mapkit.RequestPoint;
+import com.yandex.mapkit.RequestPointType;
+import com.yandex.mapkit.directions.DirectionsFactory;
+import com.yandex.mapkit.directions.driving.DrivingOptions;
+import com.yandex.mapkit.directions.driving.DrivingRoute;
+import com.yandex.mapkit.directions.driving.DrivingRouter;
+import com.yandex.mapkit.directions.driving.DrivingSession;
 import com.yandex.mapkit.geometry.LinearRing;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.geometry.Polygon;
@@ -30,6 +37,7 @@ import com.yandex.mapkit.map.MapObjectCollection;
 import com.yandex.mapkit.map.MapObjectTapListener;
 import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.map.PolygonMapObject;
+import com.yandex.mapkit.map.PolylineMapObject;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.mapkit.search.Response;
 import com.yandex.mapkit.search.SearchFactory;
@@ -70,17 +78,23 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final String PROP_ON_MAP_PRESS = "onMapPress";
     public static final String PROP_ON_LOCATION_SEARCH = "onLocationSearch";
     public static final String PROP_SEARCH_LOCATION = "searchLocation";
+    public static final String PROP_SEARCH_ROUTE = "searchRoute";
 
     private UserLocationLayer userLocationLayer;
     private ThemedReactContext context = null;
     private MapView mapView = null;
+
     private SearchManager searchManager;
     private Session searchSession;
+
+    private DrivingRouter drivingRouter;
 
     private boolean shouldSearchLocation = false;
 
     private List<PolygonMapObject> polygonsList = new ArrayList<PolygonMapObject>();
     private List<PlacemarkMapObject> markersList = new ArrayList<PlacemarkMapObject>();
+    private List<PolylineMapObject> polylinesList = new ArrayList<PolylineMapObject>();
+
     private PlacemarkMapObject userSearchPlacemark;
 
     //TODO: Add icon prop
@@ -205,6 +219,26 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
     };
 
+    private DrivingSession.DrivingRouteListener drivingRouteListener = new DrivingSession.DrivingRouteListener() {
+        @Override
+        public void onDrivingRoutes(@NonNull List<DrivingRoute> routes) {
+            MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
+            clearPolylines(mapView);
+
+            for (DrivingRoute route : routes) {
+                PolylineMapObject polyline = mapObjects.addPolyline(route.getGeometry());
+                polyline.setStrokeColor(Color.argb(153,194, 19, 19));
+                polyline.setOutlineWidth(0);
+                polylinesList.add(polyline);
+            }
+        }
+
+        @Override
+        public void onDrivingRoutesError(@NonNull Error error) {
+
+        }
+    };
+
     @Override
     public String getName() {
         return REACT_CLASS;
@@ -219,10 +253,12 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         MapKitFactory.setApiKey(nativeModule.getApiKey());
         MapKitFactory.initialize(context);
         SearchFactory.initialize(context);
+        DirectionsFactory.initialize(context);
         if (locale != null) {
             I18nManagerFactory.setLocale(locale, localeUpdateListener);
         }
         this.context = context;
+        drivingRouter = DirectionsFactory.getInstance().createDrivingRouter();
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
 
         mapView = new MapView(context);
@@ -238,6 +274,32 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         mapView.onStart();
 
         return mapView;
+    }
+
+    @ReactProp(name = PROP_SEARCH_ROUTE, defaultBoolean = false)
+    public void setSearchRoute(MapView view, boolean shouldSearch) {
+        if (shouldSearch) {
+            submitRouteRequest();
+        }
+    }
+
+    private void submitRouteRequest() {
+        if(markersList.size() == 2) {
+            try {
+                DrivingOptions options = new DrivingOptions();
+                ArrayList<RequestPoint> requestPoints = new ArrayList<>();
+
+                Point firstPoint = markersList.get(0).getGeometry();
+                Point secondPoint = markersList.get(1).getGeometry();
+
+                requestPoints.add(new RequestPoint(firstPoint, RequestPointType.WAYPOINT, null));
+                requestPoints.add(new RequestPoint(secondPoint, RequestPointType.WAYPOINT, null));
+
+                drivingRouter.requestRoutes(requestPoints, options, drivingRouteListener);
+            } catch (Exception e) {
+                //TODO: Solve the error
+            }
+        }
     }
 
     public void setAnimateToCoordinated(ReadableMap region) {
@@ -401,6 +463,20 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
 
         polygonsList.clear();
+    }
+
+    private void clearPolylines(MapView view) {
+        MapObjectCollection mapObjects = view.getMap().getMapObjects();
+
+        for (PolylineMapObject polyline : polylinesList) {
+            try {
+                mapObjects.remove(polyline);
+            } catch (Exception e) {
+                //TODO: Solve the error
+            }
+        }
+
+        polylinesList.clear();
     }
 
     @Override
