@@ -100,7 +100,11 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 if (resultLocation != null) {
                     MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
                     if (userSearchPlacemark != null) {
-                        mapObjects.remove(userSearchPlacemark);
+                        try {
+                            mapObjects.remove(userSearchPlacemark);
+                        } catch (Exception e) {
+                            //TODO: Solve the error
+                        }
                     }
                     userSearchPlacemark = mapObjects.addPlacemark(resultLocation, ImageProvider.fromBitmap(locationImage));
                     WritableMap writableMap = Arguments.createMap();
