@@ -178,13 +178,12 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
         String locale = nativeModule.getLocale();
 
-        if (locale != null) {
-            I18nManagerFactory.setLocale(locale, localeUpdateListener);
-        }
         MapKitFactory.setApiKey(nativeModule.getApiKey());
         MapKitFactory.initialize(context);
         SearchFactory.initialize(context);
-
+        if (locale != null) {
+            I18nManagerFactory.setLocale(locale, localeUpdateListener);
+        }
         this.context = context;
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
 
