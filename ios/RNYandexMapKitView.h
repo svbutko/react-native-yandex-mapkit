@@ -22,13 +22,19 @@
 @property (nonatomic, copy) RCTBubblingEventBlock onMarkerPress;
 
 @property (strong, nonatomic) YMKSearchManager* searchManager;
+@property (strong, nonatomic) CLLocationManager* locationManager;
 @property (nonatomic) YMKSearchSession* searchSession;
-@property (nonatomic) CLLocationManager* locationManager;
-@property (nonatomic, copy) NSArray* markers;
+
 @property (nonatomic, copy) NSMutableArray* mapMarkers;
-@property (nonatomic, copy) NSArray* polygons;
 @property (nonatomic, copy) NSMutableArray* mapPolygons;
+@property (nonatomic, copy) NSMutableArray* mapPolylines;
+
+@property (nonatomic, copy) NSArray* markers;
+@property (nonatomic, copy) NSArray* polygons;
+@property (nonatomic, copy) NSDictionary* initialRegion;
 @property (nonatomic) BOOL searchLocation;
+@property (nonatomic, copy) NSArray* searchRoute;
+@property (nonatomic, copy) NSDictionary* searchMarker;
 
 @property (nonatomic) YMKMapView *map;
 @property (nonatomic) float zoom;
@@ -50,5 +56,6 @@
 - (YMKPoint*) getDeviceLocation;
 - (void) clearMarkers;
 - (void) clearPolygons;
+- (void) clearPolylines;
 
 @end

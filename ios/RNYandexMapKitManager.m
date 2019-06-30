@@ -69,6 +69,19 @@ RCT_CUSTOM_VIEW_PROPERTY(polygons, NSArray, RNYandexMapKitView)
     }
 }
 
+RCT_CUSTOM_VIEW_PROPERTY(initialRegion, NSDictionary, RNYandexMapKitView)
+{
+    double latitude = [[json valueForKey:@"latitude"] doubleValue];
+    double longitude = [[json valueForKey:@"longitude"] doubleValue];
+
+    YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
+
+    YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:10 azimuth:0 tilt:0];
+    YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:5];
+
+    [view.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
+}
+
 
 RCT_EXPORT_METHOD(animateToRegion)
 {

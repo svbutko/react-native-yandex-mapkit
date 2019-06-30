@@ -16,13 +16,13 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 + (NSString*) iconImage { return iconImage; }
 + (NSString*) locationImage { return locationImage; }
 
-
 - (instancetype) init
 {
     self = [super init];
 
     _mapPolygons = [[NSMutableArray alloc]init];
     _mapMarkers = [[NSMutableArray alloc]init];
+    _mapPolylines = [[NSMutableArray alloc]init];
 
     _map = [[YMKMapView alloc] initWithFrame:self.bounds];
     _map.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -45,14 +45,13 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
         [userLocationLayer setObjectListenerWithObjectListener: self];
     }
     _userLocationIcon = [locationImage decodeBase64ToImage];
-
     _zoom = 0;
 
     return self;
 }
 
 
-- (void)willMoveToSuperview:(nullable UIView *)newSuperview {
+- (void) willMoveToSuperview:(nullable UIView *)newSuperview {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
         YMKUserLocationLayer* userLocationLayer = _map.mapWindow.map.userLocationLayer;
@@ -132,6 +131,10 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
     [placemark setIconWithImage: customPoint.icon];
     [placemark setOpacity: 1];
     [placemark setDraggable: false];
+    if (dict[@"userData"] != nil) {
+        [placemark setUserData: dict[@"userData"]];
+    }
+    [placemark addTapListenerWithTapListener: self];
 }
 
 - (void) addPolygon: (NSMutableArray*)rectPoints {
@@ -180,6 +183,20 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
     }
 
     [_mapPolygons removeAllObjects];
+}
+
+- (void) clearPolylines {
+    YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
+
+    for (YMKPlacemarkMapObject* polyline in _mapPolylines) {
+        @try {
+            [mapObjects removeWithMapObject:polyline];
+        } @catch (NSException *exception) {
+            //TODO: Solve the error
+        }
+    }
+
+    [_mapPolylines removeAllObjects];
 }
 
 - (void) setSearchLocation: (BOOL)json {
@@ -250,6 +267,31 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
     view.accuracyCircle.fillColor = UIColor.clearColor;
 }
 
+
+- (BOOL)onMapObjectTapWithMapObject:(YMKMapObject *)mapObject point:(YMKPoint *)point {
+    if ([mapObject isKindOfClass:[YMKPlacemarkMapObject class]]) {
+        NSMutableDictionary* resultObject = [[NSMutableDictionary alloc]init];
+        id userData = [mapObject userData];
+
+        if (userData != nil) {
+            @try {
+                NSString *markerId = (NSString *)[userData objectForKey:@"id"];
+
+                [resultObject setValue:markerId forKey:@"id"];
+            } @catch (NSException *exception) {
+                //TODO: Solve the error
+            }
+        }
+
+        [resultObject setValue:[NSNumber numberWithDouble:[point latitude]] forKey:@"latitude"];
+        [resultObject setValue:[NSNumber numberWithDouble:[point longitude]] forKey:@"longitude"];
+
+        self.onMarkerPress(resultObject);
+
+        return true;
+    }
+    return false;
+}
 
 - (void)onObjectRemovedWithView:(YMKUserLocationView *)view { }
 
