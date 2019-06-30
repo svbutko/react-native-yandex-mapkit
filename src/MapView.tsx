@@ -17,6 +17,10 @@ export class MapView extends Component<MapViewProps> {
         RNYandexMapKitModule.setApiKey(apiKey);
     }
 
+    public static setLocale(locale: string): void {
+        RNYandexMapKitModule.setLocale(locale);
+    }
+
     render(): JSX.Element {
         return (
             <RNYandexMapKit

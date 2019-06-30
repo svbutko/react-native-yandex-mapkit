@@ -41,8 +41,6 @@ import com.yandex.mapkit.user_location.UserLocationLayer;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
 import com.yandex.runtime.Error;
-import com.yandex.runtime.i18n.I18nManagerFactory;
-import com.yandex.runtime.i18n.LocaleUpdateListener;
 import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
@@ -64,13 +62,11 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     public static final String PROP_MARKERS = "markers";
     public static final String PROP_INITIAL_REGION = "initialRegion";
-    public static final String PROP_FOLLOW_USER_LOCATION = "followUserLocation";
     public static final String PROP_POLYGONS = "polygons";
     public static final String PROP_ON_MARKER_PRESS = "onMarkerPress";
     public static final String PROP_ON_MAP_PRESS = "onMapPress";
     public static final String PROP_ON_LOCATION_SEARCH = "onLocationSearch";
     public static final String PROP_SEARCH_LOCATION = "searchLocation";
-    public static final String PROP_LOCALE = "locale";
 
     private UserLocationLayer userLocationLayer;
     private ThemedReactContext context = null;
@@ -79,7 +75,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     private Session searchSession;
 
     private boolean shouldSearchLocation = false;
-    private boolean shouldSendOnMapPress = false;
 
     private List<PolygonMapObject> polygonsList = new ArrayList<PolygonMapObject>();
     private List<PlacemarkMapObject> markersList = new ArrayList<PlacemarkMapObject>();
@@ -91,18 +86,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     private byte[] locationDecodedString = Base64.decode("iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAAAAXNSR0IArs4c6QAABVVJREFUaAXdWl1sFFUU/u7uoibSGkNiMAahUCEpSPEFo760D/JoMFh8Mr7W2JhgNUVeIFDRQkrjD1oTXxb1hQYTDCZGIt0iWFCkLEJDFQr+i4bYdtvQn90dz7kzk52Z3fndu23teZm5c+895/vmnLl/ZwRUSverDyGfb4SGekBbQ9eVdK0GRJVuRsvQ/RgEhuk6RNc0YrFeNO//SRUMUbai7pfrkRPPEfCt0LRlkfQJ8SsRPIy49hGaD6Qj6TA6RSf0/raNyKGD9DSUA6BE3xTiaMMLXd+WqPN9FJ7QwW219Db3kjeafLWX00CIHvL6DrzYdTWMmuCEenclMJh5E8i/RN/GojBGIrcVmAFib6Ouajsad2WD6AlGKPnaEoxP9ZBXGoMoVd5GiF4svrMJz79xy0+3P6F329ZCTH+mj1h+6ipYzyOjdsdTaOm47GUl5lWJ7tYnIWb655wMg+QpgLEwJg9x95D0DJPRjDnEQ8tsVgmRgbboMTdPlfYQfzMyzOYZGX5x/IIZG2MsIcWEeDSTAwDP8vNUOPwYI2N1SDEhHprnajRzgPMsMkY5jdhb2b8hOWlicNbmGTuW8CU5T6HOOvk6PMQrgFmaNMPDL+4hsRJmixQ8pK/NzlrqZv32gbvvweaadThz82d8/89vwe3H8ai59it8VPpCM7gSRS2ZxJZV69G0qh5P3F8DIQRa+o6EI6Rjb2RIuod4C5DVLijC6KumFAmzk6ZpWJbcjd8nRs1Hwa4JsYG3HrqH9P1MsI4RW3mRsKo8/ef18GRYgeQAgxBvziogQUlYTfdci7q/kxxeEeBtczb7o1VpOfdRSJj2IoebqSCRWJ2QZwDmg4jXckhYTUYON1MJnWckaN6hA43wYpLYWrsBjy9dIUen8FrsPaKHm6GHuNCgQKczAaUSJEzTHG5Hrl00ixGv2hr2kO8i9Omah9H6SIMyT5RCW3a4sVLiQksfPjfzlrVLlmLjfQ8qCSs3S2WHm1SsVRMh8xDQzRTQfu44aj9+HQd/OIXJLJ1bKBY14cagRJVjceqO9JfxEbSc/BQrDu3BvvMnkJmedG8cskZJuBk2OeToeDa43Lw9jrb+Y1hOxHae/QK3JieCd3ZpqSbcWLmW4ZAbc7Hj+fjfqdvYfe5LLE/uQeupo/gj7NrL0K4u3FihGIvpB+ee2D0rJ7LTOJDuw8pD7WhO9WB41PfozKZPZbgxF/bQkM1CxMJUPocPLvdj9Sd7saP/88Ba1IUbmxRD7KGoq8GSoHM0Qe4bOBHIU2rDjfkgHZP5mZLQoj9kUh3nv/JVoDTc2BrlmmIy2STzM772QzVIXvnOd6BQGm7MgRJnxjxEySbFwt9U50DKVavycOOEGYlOiDNnFRAeJNzmqW/+uhFtZ+qG0+CgE9LTgCm3tlGf85D+Vvpkye6Hryo9wkiZqUwj5MgmpwErIO9c/LpomaQ83CzYC4Q4pynTgGpZjdCa771Lp21KlYYbY7bkYwuEpEnKaerHqzYA5Ra6LvTZVunKwk1iJcwWsROSCVrKaSoWXtB+OHhGalUbboTVkVS2E2KTnKDlnKZi2T/Qi5lcDsrCjTEyVofEHWUgmcrj2YZjmMk+Q3X3FtVHfDBK35JGfY8OX8KVkb8jajG6cb518V2bsLm9aO9SOKx3mlhQKUkmx9nmuNhC4RdqA+h8L0rLjIUxeWTCi78hK4LmzuMyQSt/NrJWzMG9TOtTspgxeYh7yFk7/Y9+vPD2kEmK/+Coq94EEeusxDxlmim68jzDNtl2gL9IuH8wD1ktLZifl6yk+H7B/F7mJLZgfgB0EuPyPPhF8z8Rhj4Ww1Y2ZAAAAABJRU5ErkJggg==", Base64.DEFAULT);
     private Bitmap locationImage = BitmapFactory.decodeByteArray(locationDecodedString, 0, locationDecodedString.length);
-
-    private LocaleUpdateListener localeUpdateListener = new LocaleUpdateListener() {
-        @Override
-        public void onLocaleUpdated() {
-
-        }
-
-        @Override
-        public void onLocaleUpdateError(@NonNull Error error) {
-
-        }
-    };
 
     private Session.SearchListener searchListener = new Session.SearchListener() {
         @Override
@@ -238,11 +221,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 new CameraPosition(point, mapView.getMap().getCameraPosition().getZoom(), 0.0f, 0.0f),
                 new Animation(Animation.Type.SMOOTH, 1),
                 null);
-    }
-
-    @ReactProp(name = PROP_LOCALE)
-    public void setLocale(MapView view, String locale) {
-        I18nManagerFactory.setLocale(locale, localeUpdateListener);
     }
 
     @ReactProp(name = PROP_INITIAL_REGION)
