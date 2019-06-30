@@ -344,7 +344,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 double longitude = latLng.getDouble("longitude");
 
                 boolean draggable = marker.hasKey("draggable") && marker.getBoolean("draggable");
-                ImageProvider icon = marker.hasKey("icon") ? this.getImageById(marker.getString("icon")) : pinImage;
+                ImageProvider icon = marker.hasKey("icon") ? getImageById(marker.getString("icon")) : pinImage;
 
                 Point point = new Point(latitude, longitude);
                 PlacemarkMapObject mark = view.getMap().getMapObjects().addPlacemark(point);
@@ -362,19 +362,20 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
     }
 
-    public ImageProvider getImageById(String id) {
-        if (id == "pin") {
-            return pinImage;
-        } else if (id == "selectedPin") {
-            return selectedPinImage;
-        } else if (id == "user") {
-            return userLocationImage;
-        } else {
-            return pinImage;
+    private ImageProvider getImageById(String id) {
+        switch (id) {
+            case "pin":
+                return pinImage;
+            case "selectedPin":
+                return selectedPinImage;
+            case "user":
+                return userLocationImage;
+            default:
+                return pinImage;
         }
     }
 
-    public void clearMarkers(MapView view) {
+    private void clearMarkers(MapView view) {
         MapObjectCollection mapObjects = view.getMap().getMapObjects();
 
         for (PlacemarkMapObject marker : markersList) {
@@ -388,7 +389,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         markersList.clear();
     }
 
-    public void clearPolygons(MapView view) {
+    private void clearPolygons(MapView view) {
         MapObjectCollection mapObjects = view.getMap().getMapObjects();
 
         for (PolygonMapObject polygon : polygonsList) {
