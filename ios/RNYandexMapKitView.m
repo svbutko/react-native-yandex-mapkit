@@ -50,6 +50,20 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
     return self;
 }
 
+- (void) submitRouteRequest:(NSMutableArray *)points {
+    if ([points count] == 2) {
+        YMKDrivingDrivingOptions *options = [[YMKDrivingDrivingOptions alloc]init];
+
+        //TODO: Continue
+
+//        YMKRequestPoint *firstPoint = [YMKRequestPoint new {po}];
+//        [firstPoint set: points[0]];
+//
+//        YMKRequestPoint *secondPoint = [[YMKRequestPoint alloc]init];
+//        [firstPoint point: points[1]];
+    }
+}
+
 
 - (void) willMoveToSuperview:(nullable UIView *)newSuperview {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
