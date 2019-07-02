@@ -210,7 +210,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 if (searchSession != null) {
                     searchSession.cancel();
                 }
-                searchSession = searchManager.submit(point, 16, new SearchOptions(), searchListener);
+
+                int zoom = (int)mapView.getMap().getCameraPosition().getZoom();
+                searchSession = searchManager.submit(point, zoom, new SearchOptions(), searchListener);
             }
         }
 
