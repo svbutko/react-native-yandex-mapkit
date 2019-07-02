@@ -17,6 +17,7 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.yandex.mapkit.Animation;
+import com.yandex.mapkit.GeoObject;
 import com.yandex.mapkit.GeoObjectCollection;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.RequestPoint;
@@ -43,7 +44,6 @@ import com.yandex.mapkit.search.Response;
 import com.yandex.mapkit.search.SearchFactory;
 import com.yandex.mapkit.search.SearchManager;
 import com.yandex.mapkit.search.SearchManagerType;
-import com.yandex.mapkit.search.SearchMetadata;
 import com.yandex.mapkit.search.SearchOptions;
 import com.yandex.mapkit.search.Session;
 import com.yandex.mapkit.user_location.UserLocationLayer;
@@ -118,28 +118,33 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     private Session.SearchListener searchListener = new Session.SearchListener() {
         @Override
         public void onSearchResponse(@NonNull Response response) {
-            List<GeoObjectCollection.Item> searchResultList = response.getCollection().getChildren();
+            try {
+                List<GeoObjectCollection.Item> searchResultList = response.getCollection().getChildren();
 
-            if(searchResultList.size() > 0) {
-                Point resultLocation = searchResultList.get(0).getObj().getGeometry().get(0).getPoint();
-                if (resultLocation != null) {
-                    MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
-                    if (userSearchPlacemark != null) {
-                        try {
-                            mapObjects.remove(userSearchPlacemark);
-                        } catch (Exception e) {
-                            //TODO: Solve the error
+                if(searchResultList.size() > 0) {
+                    GeoObject geoObject = searchResultList.get(0).getObj();
+                    Point resultLocation = geoObject.getGeometry().get(0).getPoint();
+
+                    if (resultLocation != null) {
+                        MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
+                        if (userSearchPlacemark != null) {
+                            try {
+                                mapObjects.remove(userSearchPlacemark);
+                            } catch (Exception e) {
+                                //TODO: Solve the error
+                            }
                         }
-                    }
-                    userSearchPlacemark = mapObjects.addPlacemark(resultLocation, userLocationImage);
-                    WritableMap writableMap = Arguments.createMap();
-                    SearchMetadata metadata = response.getMetadata();
+                        userSearchPlacemark = mapObjects.addPlacemark(resultLocation, userLocationImage);
+                        WritableMap writableMap = Arguments.createMap();
 
-                    writableMap.putString("location", metadata.getCorrectedRequestText());
-                    writableMap.putDouble("latitude", resultLocation.getLatitude());
-                    writableMap.putDouble("longitude", resultLocation.getLongitude());
-                    sendNativeEvent(PROP_ON_LOCATION_SEARCH, writableMap, mapView.getId(), context);
+                        writableMap.putString("location", geoObject.getDescriptionText() + ", " + geoObject.getName());
+                        writableMap.putDouble("latitude", resultLocation.getLatitude());
+                        writableMap.putDouble("longitude", resultLocation.getLongitude());
+                        sendNativeEvent(PROP_ON_LOCATION_SEARCH, writableMap, mapView.getId(), context);
+                    }
                 }
+            } catch (Exception e) {
+                //TODO: Solve the error
             }
         }
 
