@@ -83,22 +83,22 @@ RCT_CUSTOM_VIEW_PROPERTY(initialRegion, NSDictionary, RNYandexMapKitView)
 }
 
 
-RCT_EXPORT_METHOD(animateToRegion)
+RCT_EXPORT_METHOD(animateToRegion: (nonnull NSNumber *)reactTag params: (nonnull NSDictionary *)params)
+{
+    [mapKitView animateToRegion: params];
+}
+
+RCT_EXPORT_METHOD(navigateToUserLocation: (nonnull NSNumber *)reactTag)
 {
     [mapKitView navigateToUserLocation];
 }
 
-RCT_EXPORT_METHOD(navigateToUserLocation)
-{
-    [mapKitView navigateToUserLocation];
-}
-
-RCT_EXPORT_METHOD(zoomIn)
+RCT_EXPORT_METHOD(zoomIn: (nonnull NSNumber *)reactTag)
 {
     [mapKitView zoomIn];
 }
 
-RCT_EXPORT_METHOD(zoomOut)
+RCT_EXPORT_METHOD(zoomOut: (nonnull NSNumber *)reactTag)
 {
     [mapKitView zoomOut];
 }

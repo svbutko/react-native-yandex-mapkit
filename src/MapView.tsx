@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {MapViewProps, Region} from "react-native-yandex-mapkit";
-import {UIManager, requireNativeComponent, findNodeHandle, NativeModules, Platform} from "react-native";
+import {findNodeHandle, NativeModules, requireNativeComponent, UIManager} from "react-native";
 
 const RNYandexMapKit = requireNativeComponent("RNYandexMapKit");
 const RNYandexMapKitModule = NativeModules.RNYandexMapKit;
@@ -45,42 +45,34 @@ export class MapView extends Component<MapViewProps> {
     }
 
     public navigateToUserLocation(): void {
-        if (Platform.OS == "android") {
-            UIManager.dispatchViewManagerCommand(
-                findNodeHandle(this),
-                UIManager.RNYandexMapKit.Commands.navigateToUserLocation,
-                [],
-            );
-        }
+        UIManager.dispatchViewManagerCommand(
+            findNodeHandle(this),
+            UIManager.RNYandexMapKit.Commands.navigateToUserLocation,
+            [],
+        );
     }
 
     public zoomIn(): void {
-        if (Platform.OS == "android") {
-            UIManager.dispatchViewManagerCommand(
-                findNodeHandle(this),
-                UIManager.RNYandexMapKit.Commands.zoomIn,
-                [],
-            );
-        }
+        UIManager.dispatchViewManagerCommand(
+            findNodeHandle(this),
+            UIManager.RNYandexMapKit.Commands.zoomIn,
+            [],
+        );
     }
 
     public zoomOut(): void {
-        if (Platform.OS == "android") {
-            UIManager.dispatchViewManagerCommand(
-                findNodeHandle(this),
-                UIManager.RNYandexMapKit.Commands.zoomOut,
-                [],
-            );
-        }
+        UIManager.dispatchViewManagerCommand(
+            findNodeHandle(this),
+            UIManager.RNYandexMapKit.Commands.zoomOut,
+            [],
+        );
     }
 
     public animateToRegion(region: Region): void {
-        if (Platform.OS == "android") {
-            UIManager.dispatchViewManagerCommand(
-                findNodeHandle(this),
-                UIManager.RNYandexMapKit.Commands.animateToRegion,
-                [region],
-            );
-        }
+        UIManager.dispatchViewManagerCommand(
+            findNodeHandle(this),
+            UIManager.RNYandexMapKit.Commands.animateToRegion,
+            [region],
+        );
     }
 }
