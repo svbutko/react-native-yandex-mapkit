@@ -11,6 +11,10 @@
 #import <CoreLocation/CoreLocation.h>
 #import <YandexMapKitSearch/YMKSearchManager.h>
 #import <YandexMapKitSearch/YMKSearchSession.h>
+#import <YandexMapKitDirections/YMKDrivingSession.h>
+#import <YandexMapKitDirections/YMKDrivingDrivingOptions.h>
+#import <YandexMapKitDirections/YMKDrivingDrivingRouter.h>
+#import <YandexMapKitDirections/YMKDrivingRoute.h>
 #import "NSStringCategory.h"
 #import "WSPoint.h"
 
@@ -24,10 +28,12 @@
 @property (strong, nonatomic) YMKSearchManager* searchManager;
 @property (strong, nonatomic) CLLocationManager* locationManager;
 @property (nonatomic) YMKSearchSession* searchSession;
+@property (strong, nonatomic) YMKDrivingRouter* drivingRouter;
 
 @property (nonatomic, copy) NSMutableArray* mapMarkers;
 @property (nonatomic, copy) NSMutableArray* mapPolygons;
 @property (nonatomic, copy) NSMutableArray* mapPolylines;
+@property (nonatomic, copy) YMKPlacemarkMapObject* userSearchPlacemark;
 
 @property (nonatomic, copy) NSArray* markers;
 @property (nonatomic, copy) NSArray* polygons;
@@ -45,10 +51,13 @@
 + (NSString*) iconKey;
 + (NSString*) iconImage;
 + (NSString*) locationImage;
++ (NSString*) selectedPinImage;
++ (NSString*) userLocationImage;
 
 - (void) addMarkerWithJSON: (id)json;
 - (void) addPolygon: (NSMutableArray*)rectPoints;
 - (void) setSearchLocation: (BOOL)json;
+- (void) setSearchMarker:(NSDictionary *)searchMarker;
 
 - (void) navigateToUserLocation;
 - (void) zoomIn;
@@ -58,5 +67,6 @@
 - (void) clearMarkers;
 - (void) clearPolygons;
 - (void) clearPolylines;
-
+- (void) setSearchRoute:(NSArray *)searchRoute;
+- (void) submitRouteRequest:(NSMutableArray *)points;
 @end

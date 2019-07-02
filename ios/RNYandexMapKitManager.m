@@ -27,17 +27,19 @@ RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
 
     for (NSDictionary *jsMarker in json) {
         NSDictionary *coordinates = [jsMarker objectForKey:@"coordinate"];
+        NSString *identifier = [jsMarker objectForKey:@"identifier"];
 
         double latitude = [[coordinates valueForKey:@"latitude"] doubleValue];
         double longitude = [[coordinates valueForKey:@"longitude"] doubleValue];
 
         YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
 
+
         NSDictionary* addMarkerJSON =
         @{
           RNYandexMapKitView.addressKey:
               @{
-                  @"id": @"initialAddress",
+                  @"id": identifier,
                   @"latitude": [NSString stringWithFormat:@"%f", point.latitude],
                   @"longitude": [NSString stringWithFormat:@"%f", point.longitude],
                   },
@@ -47,6 +49,21 @@ RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
         [view addMarkerWithJSON: addMarkerJSON];
     }
 }
+
+RCT_CUSTOM_VIEW_PROPERTY(searchMarker, NSDictionary, RNYandexMapKitView)
+{
+    if (json != nil) {
+        [view setSearchMarker:json];
+    }
+}
+
+RCT_CUSTOM_VIEW_PROPERTY(searchRoute, NSArray, RNYandexMapKitView)
+{
+    if ([json count] == 2) {
+        [view setSearchRoute:json];
+    }
+}
+
 
 RCT_CUSTOM_VIEW_PROPERTY(polygons, NSArray, RNYandexMapKitView)
 {
