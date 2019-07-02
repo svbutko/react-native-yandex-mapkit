@@ -147,7 +147,6 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
 }
 
 - (void) setSearchRoute:(NSArray *)searchRoute {
-
     NSMutableArray* points = [[NSMutableArray alloc]init];
 
     for (NSDictionary *marker in searchRoute) {
@@ -159,6 +158,7 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
         YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
         [points addObject:point];
     }
+
     [self submitRouteRequest:points];
 }
 
@@ -168,24 +168,24 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
             NSMutableArray* requestPoints = [[NSMutableArray alloc]init];
             YMKDrivingDrivingOptions *options = [[YMKDrivingDrivingOptions alloc]init];
 
-            YMKRequestPoint *firstPoint = [YMKRequestPoint requestPointWithPoint:points[0] type:YMKRequestPointTypeWaypoint pointContext:nil];
-            YMKRequestPoint *secondPoint = [YMKRequestPoint requestPointWithPoint:points[1] type:YMKRequestPointTypeWaypoint pointContext:nil];
+            YMKRequestPoint *firstPoint = [YMKRequestPoint requestPointWithPoint:[points objectAtIndex:0] type:YMKRequestPointTypeWaypoint pointContext:nil];
+            YMKRequestPoint *secondPoint = [YMKRequestPoint requestPointWithPoint:[points objectAtIndex:1] type:YMKRequestPointTypeWaypoint pointContext:nil];
             [requestPoints addObject:firstPoint];
             [requestPoints addObject:secondPoint];
-
 
             [_drivingRouter requestRoutesWithPoints:requestPoints
                                          drivingOptions:options
                                            routeHandler:^(NSArray<YMKDrivingRoute *> *routes, NSError *error) {
-                                               YMKMapObjectCollection* mapObjects = self.map.mapWindow.map.mapObjects;
                                                [self clearPolylines];
+                                               YMKMapObjectCollection* mapObjects = self.map.mapWindow.map.mapObjects;
 
                                                if ([routes count] > 0) {
-                                                   YMKPolylineMapObject *polyline = [mapObjects addPolylineWithPolyline:[routes[0] geometry]];
+                                                   YMKPolylineMapObject *polyline = [mapObjects addPolylineWithPolyline:[[routes objectAtIndex:0] geometry]];
                                                    [polyline setStrokeColor:[UIColor colorWithRed:194.0f/255.0f
                                                                                            green:19.0f/255.0f
                                                                                             blue:19.0f/255.0f
                                                                                            alpha:0.6f]];
+                                                   [self.mapPolylines addObject:polyline];
                                                }
                                            }];
         }
