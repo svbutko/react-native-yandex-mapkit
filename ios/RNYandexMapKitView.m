@@ -246,16 +246,18 @@ static NSString* locationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrA
 }
 
 - (void) animateToRegion:(NSDictionary *)region {
-    double latitude = [[region objectForKey:@"latitude"] doubleValue];
-    double longitude = [[region objectForKey:@"longitude"] doubleValue];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        double latitude = [[region objectForKey:@"latitude"] doubleValue];
+        double longitude = [[region objectForKey:@"longitude"] doubleValue];
 
-    YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
+        YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
 
-    float zoom = self.map.mapWindow.map.cameraPosition.zoom;
-    YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:zoom azimuth:0 tilt:0];
-    YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
+        float zoom = self.map.mapWindow.map.cameraPosition.zoom;
+        YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:zoom azimuth:0 tilt:0];
+        YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
 
-    [self.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
+        [self.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
+    }];
 }
 
 - (YMKPoint*) getDeviceLocation

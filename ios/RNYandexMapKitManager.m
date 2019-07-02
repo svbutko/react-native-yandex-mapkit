@@ -83,7 +83,7 @@ RCT_CUSTOM_VIEW_PROPERTY(initialRegion, NSDictionary, RNYandexMapKitView)
 }
 
 
-RCT_EXPORT_METHOD(animateToRegion: (nonnull NSNumber *)reactTag params: (nonnull NSDictionary *)params)
+RCT_EXPORT_METHOD(animateToRegion: (nonnull NSNumber *)reactTag region: (nonnull NSDictionary *)params)
 {
     [mapKitView animateToRegion: params];
 }
