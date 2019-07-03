@@ -127,14 +127,14 @@ RCT_EXPORT_METHOD(zoomOut: (nonnull NSNumber *)reactTag)
 - (instancetype) init
 {
     self = [super init];
-    mapKitView = RNYandexMapKitView.new;
+    mapKitView = [[RNYandexMapKitView alloc]init];
     return self;
 }
 
 
 - (UIView *)view
 {
-    return mapKitView;
+    return [[RNYandexMapKitView alloc]init];
 }
 
 @end

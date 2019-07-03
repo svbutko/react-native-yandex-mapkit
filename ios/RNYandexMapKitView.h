@@ -15,25 +15,23 @@
 #import <YandexMapKitDirections/YMKDrivingDrivingOptions.h>
 #import <YandexMapKitDirections/YMKDrivingDrivingRouter.h>
 #import <YandexMapKitDirections/YMKDrivingRoute.h>
-#import "NSStringCategory.h"
-#import "WSPoint.h"
 
 @interface RNYandexMapKitView : RCTView <YMKUserLocationObjectListener, YMKMapInputListener, CLLocationManagerDelegate, YMKMapCameraListener, YMKMapObjectTapListener>
 
-@property (nonatomic, copy) RCTBubblingEventBlock onLocationSearch;
-@property (nonatomic, copy) RCTBubblingEventBlock onLocationError;
-@property (nonatomic, copy) RCTBubblingEventBlock onMapPress;
-@property (nonatomic, copy) RCTBubblingEventBlock onMarkerPress;
+@property (nonatomic) RCTBubblingEventBlock onLocationSearch;
+@property (nonatomic) RCTBubblingEventBlock onLocationError;
+@property (nonatomic) RCTBubblingEventBlock onMapPress;
+@property (nonatomic) RCTBubblingEventBlock onMarkerPress;
 
 @property (strong, nonatomic) YMKSearchManager* searchManager;
-@property (strong, nonatomic) CLLocationManager* locationManager;
+@property (nonatomic) CLLocationManager* locationManager;
 @property (nonatomic) YMKSearchSession* searchSession;
-@property (strong, nonatomic) YMKDrivingRouter* drivingRouter;
+@property (nonatomic) YMKDrivingRouter* drivingRouter;
 
-@property (nonatomic, copy) NSMutableArray* mapMarkers;
-@property (nonatomic, copy) NSMutableArray* mapPolygons;
-@property (nonatomic, copy) NSMutableArray* mapPolylines;
-@property (nonatomic, copy) YMKPlacemarkMapObject* userSearchPlacemark;
+@property (nonatomic) NSMutableArray* mapMarkers;
+@property (nonatomic) NSMutableArray* mapPolygons;
+@property (nonatomic) NSMutableArray* mapPolylines;
+@property (nonatomic) YMKPlacemarkMapObject* userSearchPlacemark;
 
 @property (nonatomic, copy) NSArray* markers;
 @property (nonatomic, copy) NSArray* polygons;
@@ -47,8 +45,6 @@
 
 @property (nonatomic) UIImage* userLocationIcon;
 
-+ (NSString*) addressKey;
-+ (NSString*) iconKey;
 + (NSString*) iconImage;
 + (NSString*) locationImage;
 + (NSString*) selectedPinImage;
