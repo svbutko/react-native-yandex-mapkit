@@ -28,25 +28,29 @@ RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
     for (NSDictionary *jsMarker in json) {
         NSDictionary *coordinates = [jsMarker objectForKey:@"coordinate"];
         NSString *identifier = [jsMarker objectForKey:@"identifier"];
+        NSString *icon = [jsMarker objectForKey:@"icon"];
 
         double latitude = [[coordinates valueForKey:@"latitude"] doubleValue];
         double longitude = [[coordinates valueForKey:@"longitude"] doubleValue];
 
-        YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
+        NSNumber *latitudeNumber = [[NSNumber alloc] initWithDouble:latitude];
+        NSNumber *longitudeNumber = [[NSNumber alloc] initWithDouble:longitude];
 
+        NSMutableDictionary* marker = [[NSMutableDictionary alloc]init];
+        [marker setValue:latitudeNumber forKey:@"latitude"];
+        [marker setValue:longitudeNumber forKey:@"longitude"];
 
-        NSDictionary* addMarkerJSON =
-        @{
-          RNYandexMapKitView.addressKey:
-              @{
-                  @"id": identifier,
-                  @"latitude": [NSString stringWithFormat:@"%f", point.latitude],
-                  @"longitude": [NSString stringWithFormat:@"%f", point.longitude],
-                  },
-          RNYandexMapKitView.iconKey: RNYandexMapKitView.iconImage
-          };
+        if (identifier != nil) {
+            [marker setValue:identifier forKey:@"id"];
+        }
 
-        [view addMarkerWithJSON: addMarkerJSON];
+        if (icon != nil) {
+            [marker setValue:icon forKey:@"icon"];
+        } else {
+            [marker setValue:@"pin" forKey:@"icon"];
+        }
+
+        [view addMarkerWithJSON: marker];
     }
 }
 

@@ -54,7 +54,7 @@
 + (NSString*) selectedPinImage;
 + (NSString*) userLocationImage;
 
-- (void) addMarkerWithJSON: (id)json;
+- (void) addMarkerWithJSON: (NSMutableDictionary *)json;
 - (void) addPolygon: (NSMutableArray*)rectPoints;
 - (void) setSearchLocation: (BOOL)json;
 - (void) setSearchMarker:(NSDictionary *)searchMarker;
@@ -69,4 +69,5 @@
 - (void) clearPolylines;
 - (void) setSearchRoute:(NSArray *)searchRoute;
 - (void) submitRouteRequest:(NSMutableArray *)points;
+- (UIImage*) getImageByID: (NSString *)imageId;
 @end

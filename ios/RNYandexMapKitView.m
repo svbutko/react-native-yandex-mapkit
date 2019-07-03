@@ -184,7 +184,7 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
                                                    [polyline setStrokeColor:[UIColor colorWithRed:194.0f/255.0f
                                                                                            green:19.0f/255.0f
                                                                                             blue:19.0f/255.0f
-                                                                                           alpha:0.6f]];
+                                                                                           alpha:1.0f]];
                                                    [self.mapPolylines addObject:polyline];
                                                }
                                            }];
@@ -195,22 +195,18 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
 }
 
 
-- (void) addMarkerWithJSON: (id)json {
-    NSDictionary* dict = nil;
-    if ([json isKindOfClass:[NSDictionary class]]) {
-        dict = (NSDictionary*)json;
-    }
-    WSPoint* customPoint = [[WSPoint alloc] initWithJSON:dict[addressKey]];
-    customPoint.icon =  [dict[iconKey] decodeBase64ToImage];
-    if (customPoint == nil) { return; }
+- (void) addMarkerWithJSON: (NSMutableDictionary*)dict {
+    UIImage* icon = [self getImageByID:[dict valueForKey:@"icon"]];
+    double longitude = [[dict objectForKey:@"longitude"] doubleValue];
+    double latitude = [[dict objectForKey:@"latitude"] doubleValue];
 
     YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
-    YMKPoint* point = [YMKPoint pointWithLatitude:customPoint.latitude longitude:customPoint.longitude];
+    YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
     YMKPlacemarkMapObject* placemark = [mapObjects addPlacemarkWithPoint:point];
 
     [_mapMarkers addObject:placemark];
 
-    [placemark setIconWithImage: customPoint.icon];
+    [placemark setIconWithImage: icon];
     [placemark setOpacity: 1];
     [placemark setDraggable: false];
     if (dict[@"id"] != nil) {
@@ -219,6 +215,18 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
         [placemark setUserData: userData];
     }
     [placemark addTapListenerWithTapListener: self];
+}
+
+- (UIImage*) getImageByID:(NSString *)imageId {
+    if ([imageId isEqualToString:@"pin"]) {
+        return [iconImage decodeBase64ToImage];
+    } else if ([imageId isEqualToString:@"selectedPin"]) {
+        return [selectedPinImage decodeBase64ToImage];
+    } else if ([imageId isEqualToString:@"user"]) {
+        return [userLocationImage decodeBase64ToImage];
+    } else {
+        return [iconImage decodeBase64ToImage];
+    }
 }
 
 - (void) addPolygon: (NSMutableArray*)rectPoints {
