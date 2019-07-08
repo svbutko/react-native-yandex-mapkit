@@ -1,9 +1,13 @@
 package com.svbutko.RNYandexMapKit;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 
 import com.facebook.react.bridge.Arguments;
@@ -30,6 +34,7 @@ import com.yandex.mapkit.directions.driving.DrivingSession;
 import com.yandex.mapkit.geometry.LinearRing;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.geometry.Polygon;
+import com.yandex.mapkit.geometry.Polyline;
 import com.yandex.mapkit.layers.ObjectEvent;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.InputListener;
@@ -63,7 +68,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements UserLocationObjectListener {
+public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements UserLocationObjectListener, ActivityCompat.OnRequestPermissionsResultCallback {
     public static final String REACT_CLASS = "RNYandexMapKit";
 
     public static final int ANIMATE_TO_REGION = 1;
@@ -234,10 +239,16 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             clearPolylines(mapView);
 
             if(!routes.isEmpty()) {
-                PolylineMapObject polyline = mapObjects.addPolyline(routes.get(0).getGeometry());
-                polyline.setStrokeColor(Color.argb(153,194, 19, 19));
-                polyline.setOutlineWidth(0);
-                polylinesList.add(polyline);
+                for (int i = 0; i < routes.size(); i++) {
+                    Polyline polylineGeometry = routes.get(i).getGeometry();
+                    if (polylineGeometry.getPoints().size() > 0) {
+                        PolylineMapObject polyline = mapObjects.addPolyline(polylineGeometry);
+                        polyline.setStrokeColor(Color.argb(153,194, 19, 19));
+                        polyline.setOutlineWidth(0);
+                        polylinesList.add(polyline);
+                        break;
+                    }
+                }
             }
         }
 
@@ -272,15 +283,23 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         mapView.getMap().addInputListener(inputListener);
         mapView.getMap().getMapObjects().addCollection();
 
-        userLocationLayer = mapView.getMap().getUserLocationLayer();
-        userLocationLayer.setEnabled(true);
-        userLocationLayer.setHeadingEnabled(true);
-        userLocationLayer.setObjectListener(this);
+        if (ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.context.getCurrentActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        } else {
+            this.addUserLocationLayer();
+        }
 
         MapKitFactory.getInstance().onStart();
         mapView.onStart();
 
         return mapView;
+    }
+
+    private void addUserLocationLayer() {
+        userLocationLayer = mapView.getMap().getUserLocationLayer();
+        userLocationLayer.setEnabled(true);
+        userLocationLayer.setHeadingEnabled(true);
+        userLocationLayer.setObjectListener(this);
     }
 
     @ReactProp(name = PROP_SEARCH_MARKER)
@@ -362,11 +381,38 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     }
 
     public void navigateToUserLocation() {
-        if (userLocationLayer != null) {
-            mapView.getMap().move(
-                    new CameraPosition(userLocationLayer.cameraPosition().getTarget(), 18.0f, 0.0f, 0.0f),
-                    new Animation(Animation.Type.SMOOTH, 1),
-                    null);
+        if (ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.context.getCurrentActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        } else {
+            this.navigateToLocationAfterChecks();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            this.navigateToLocationAfterChecks();
+        }
+    }
+
+    private void navigateToLocationAfterChecks() {
+        try {
+            if (userLocationLayer == null) {
+                this.addUserLocationLayer();
+            }
+
+            CameraPosition cameraPosition = userLocationLayer.cameraPosition();
+            if (cameraPosition != null) {
+                Point point = cameraPosition.getTarget();
+                if (point != null) {
+                    mapView.getMap().move(
+                            new CameraPosition(point, 18.0f, 0.0f, 0.0f),
+                            new Animation(Animation.Type.SMOOTH, 1),
+                            null);
+                }
+            }
+        } catch (Exception e) {
+            //TODO: Solve the error
         }
     }
 
