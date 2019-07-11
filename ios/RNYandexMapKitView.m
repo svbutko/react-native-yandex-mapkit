@@ -89,7 +89,14 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
                                                      }
 
                                                      self.userSearchPlacemark = [mapObjects addPlacemarkWithPoint:resultLocation image:[userLocationImage decodeBase64ToImage]];
-                                                     NSString* location = [NSString stringWithFormat:@"%@/%@/%@", [geoObject descriptionText], @", ", [geoObject name]];
+                                                     NSString* descriptionLocation = [geoObject descriptionText];
+                                                     NSString* location = [[NSString alloc]init];
+
+                                                     if (descriptionLocation != nil) {
+                                                         location = [NSString stringWithFormat:@"%@/%@/%@", descriptionLocation, @", ", [geoObject name]];
+                                                     } else {
+                                                         location = [geoObject name];
+                                                     }
 
                                                      NSDictionary* addressDict = @{
                                                                                    @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],

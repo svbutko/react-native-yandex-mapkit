@@ -142,7 +142,14 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                         userSearchPlacemark = mapObjects.addPlacemark(resultLocation, userLocationImage);
                         WritableMap writableMap = Arguments.createMap();
 
-                        writableMap.putString("location", geoObject.getDescriptionText() + ", " + geoObject.getName());
+                        String descriptionLocation = geoObject.getDescriptionText();
+                        String location = geoObject.getName();
+
+                        if (descriptionLocation != null) {
+                            location = descriptionLocation + ", " + location;
+                        }
+
+                        writableMap.putString("location", location);
                         writableMap.putDouble("latitude", resultLocation.getLatitude());
                         writableMap.putDouble("longitude", resultLocation.getLongitude());
                         sendNativeEvent(PROP_ON_LOCATION_SEARCH, writableMap, mapView.getId(), context);
