@@ -58,7 +58,7 @@
 - (void) navigateToUserLocation;
 - (void) zoomIn;
 - (void) zoomOut;
-- (void) animateToRegion: (NSDictionary*)region;
+- (void) navigateToRegion: (NSDictionary*)region isAnimated: (BOOL)isAnimated;
 - (YMKPoint*) getDeviceLocation;
 - (void) clearMarkers;
 - (void) clearPolygons;

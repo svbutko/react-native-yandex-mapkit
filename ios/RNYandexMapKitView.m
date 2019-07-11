@@ -340,7 +340,7 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
     }];
 }
 
-- (void) animateToRegion:(NSDictionary *)region {
+- (void) navigateToRegion:(NSDictionary *)region isAnimated:(BOOL)isAnimated {
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         double latitude = [[region objectForKey:@"latitude"] doubleValue];
         double longitude = [[region objectForKey:@"longitude"] doubleValue];
@@ -349,9 +349,13 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
 
         float zoom = self.map.mapWindow.map.cameraPosition.zoom;
         YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:zoom azimuth:0 tilt:0];
-        YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
 
-        [self.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
+        if (isAnimated) {
+            YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
+            [self.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
+        } else {
+            [self.map.mapWindow.map moveWithCameraPosition:cameraPos];
+        }
     }];
 }
 

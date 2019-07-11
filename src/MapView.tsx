@@ -68,11 +68,11 @@ export class MapView extends Component<MapViewProps> {
         );
     }
 
-    public animateToRegion(region: Region): void {
+    public navigateToRegion(region: Region, isAnimated?: boolean): void {
         UIManager.dispatchViewManagerCommand(
             findNodeHandle(this),
-            UIManager.RNYandexMapKit.Commands.animateToRegion,
-            [region],
+            UIManager.RNYandexMapKit.Commands.navigateToRegion,
+            [region, isAnimated],
         );
     }
 }

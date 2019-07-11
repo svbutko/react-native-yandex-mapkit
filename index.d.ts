@@ -22,7 +22,7 @@ declare module "react-native-yandex-mapkit" {
     export default class MapView extends Component<MapViewProps> {
         public static setApiKey(apiKey: string): void;
         public static setLocale(locale: string): void;
-        public animateToRegion(region: Region): void;
+        public navigateToRegion(region: Region, isAnimated?: boolean): void;
         public zoomIn(): void;
         public zoomOut(): void;
         public navigateToUserLocation(): void;

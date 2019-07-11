@@ -98,15 +98,14 @@ RCT_CUSTOM_VIEW_PROPERTY(initialRegion, NSDictionary, RNYandexMapKitView)
     YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
 
     YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:10 azimuth:0 tilt:0];
-    YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:5];
 
-    [view.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
+    [view.map.mapWindow.map moveWithCameraPosition:cameraPos];
 }
 
 
-RCT_EXPORT_METHOD(animateToRegion: (nonnull NSNumber *)reactTag region: (nonnull NSDictionary *)params)
+RCT_EXPORT_METHOD(navigateToRegion: (nonnull NSNumber *)reactTag region: (nonnull NSDictionary *)params isAnimated: (BOOL)isAnimated)
 {
-    [mapKitView animateToRegion: params];
+    [mapKitView navigateToRegion:params isAnimated:isAnimated];
 }
 
 RCT_EXPORT_METHOD(navigateToUserLocation: (nonnull NSNumber *)reactTag)

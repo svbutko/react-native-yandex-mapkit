@@ -71,7 +71,7 @@ import javax.annotation.Nullable;
 public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements UserLocationObjectListener, ActivityCompat.OnRequestPermissionsResultCallback {
     public static final String REACT_CLASS = "RNYandexMapKit";
 
-    public static final int ANIMATE_TO_REGION = 1;
+    public static final int NAVIGATE_TO_REGION = 1;
     public static final int ZOOM_IN = 2;
     public static final int ZOOM_OUT = 3;
     public static final int NAVIGATE_TO_USER_LOCATION = 4;
@@ -364,7 +364,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
     }
 
-    public void setAnimateToCoordinated(ReadableMap region) {
+    public void setNavigateToCoordinates(ReadableMap region, boolean isAnimated) {
         double latitude = region.getDouble("latitude");
         double longitude = region.getDouble("longitude");
         double latitudeDelta = region.getDouble("latitudeDelta");
@@ -372,7 +372,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
         Point point = new Point(latitude, longitude);
 
-        this.animatedToCoordinates(point);
+        this.navigateToCoordinates(point, isAnimated);
     }
 
     public void zoomIn() {
@@ -423,11 +423,14 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
     }
 
-    public void animatedToCoordinates(Point point) {
-        mapView.getMap().move(
-                new CameraPosition(point, mapView.getMap().getCameraPosition().getZoom(), 0.0f, 0.0f),
-                new Animation(Animation.Type.SMOOTH, 1),
-                null);
+    public void navigateToCoordinates(Point point, boolean isAnimated) {
+        CameraPosition position = new CameraPosition(point, mapView.getMap().getCameraPosition().getZoom(), 0.0f, 0.0f);
+
+        if (isAnimated) {
+            mapView.getMap().move(position, new Animation(Animation.Type.SMOOTH, 1), null);
+        } else {
+            mapView.getMap().move(position);
+        }
     }
 
     @ReactProp(name = PROP_INITIAL_REGION)
@@ -439,11 +442,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
         Point point = new Point(latitude, longitude);
 
-        view.getMap().move(
-                new CameraPosition(point, 10.0f, 0.0f, 0.0f),
-                new Animation(Animation.Type.SMOOTH, 5),
-                null
-        );
+        view.getMap().move(new CameraPosition(point, 10.0f, 0.0f, 0.0f));
     }
 
     @ReactProp(name = PROP_SEARCH_LOCATION, defaultBoolean = false)
@@ -589,8 +588,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public void receiveCommand(MapView mapView, int commandId, @Nullable ReadableArray args) {
         super.receiveCommand(mapView, commandId, args);
         switch (commandId) {
-            case ANIMATE_TO_REGION:
-                this.setAnimateToCoordinated(args.getMap(0));
+            case NAVIGATE_TO_REGION:
+                this.setNavigateToCoordinates(args.getMap(0), args.getBoolean(1));
                 return;
             case ZOOM_IN:
                 this.zoomIn();
@@ -613,7 +612,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     @Override
     public Map<String, Integer> getCommandsMap() {
         Map<String, Integer> map = this.CreateMap(
-                "animateToRegion", ANIMATE_TO_REGION,
+                "navigateToRegion", NAVIGATE_TO_REGION,
                 "zoomIn", ZOOM_IN,
                 "zoomOut", ZOOM_OUT,
                 "navigateToUserLocation", NAVIGATE_TO_USER_LOCATION
