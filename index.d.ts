@@ -1,10 +1,8 @@
 /*tslint:disable:interface-name*/
 
-import {MarkerData} from "react-native-yandex-mapkit";
-
 declare module "react-native-yandex-mapkit" {
     import React, {Component} from "react";
-    import {StyleProp, ViewStyle, NativeSyntheticEvent, ImageURISource, ImageRequireSource, ViewProps} from "react-native";
+    import {StyleProp, ViewStyle} from "react-native";
 
     export interface MapViewProps {
         markers?: MarkerProps[];
@@ -19,7 +17,7 @@ declare module "react-native-yandex-mapkit" {
         style?: StyleProp<ViewStyle>;
     }
 
-    export default class MapView extends Component<MapViewProps> {
+    export default class MapView extends Component<Partial<MapViewProps>> {
         public static setApiKey(apiKey: string): void;
         public static setLocale(locale: string): void;
         public navigateToRegion(region: Region, isAnimated?: boolean): void;
