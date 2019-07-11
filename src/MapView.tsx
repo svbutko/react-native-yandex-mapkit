@@ -68,7 +68,8 @@ export class MapView extends Component<MapViewProps> {
         );
     }
 
-    public navigateToRegion(region: Region, isAnimated?: boolean): void {
+    public navigateToRegion(region: Region, isAnimatedParam?: boolean): void {
+        const isAnimated = isAnimatedParam ? isAnimatedParam : false;
         UIManager.dispatchViewManagerCommand(
             findNodeHandle(this),
             UIManager.RNYandexMapKit.Commands.navigateToRegion,
