@@ -423,7 +423,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
     }
 
-    public void navigateToCoordinates(Point point, boolean isAnimated) {
+    public void navigateToCoordinates(Point point, Boolean isAnimated) {
         CameraPosition position = new CameraPosition(point, mapView.getMap().getCameraPosition().getZoom(), 0.0f, 0.0f);
 
         if (isAnimated) {
