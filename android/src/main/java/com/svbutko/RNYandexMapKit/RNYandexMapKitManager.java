@@ -631,7 +631,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 "zoomIn", ZOOM_IN,
                 "zoomOut", ZOOM_OUT,
                 "navigateToUserLocation", NAVIGATE_TO_USER_LOCATION,
-                "navigateToBoundingBox", NAVIGATE_TO_BOUNDING_BOX,
+                "navigateToBoundingBox", NAVIGATE_TO_BOUNDING_BOX
         );
 
         return map;
