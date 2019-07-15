@@ -593,7 +593,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
         Point southWestPoint = new Point(swLatitude, swLongitude);
 
-        mapView.getMap().cameraPosition(new BoundingBox(southWestPoint, northEastPoint));
+        CameraPosition cameraPosition = mapView.getMap().cameraPosition(new BoundingBox(southWestPoint, northEastPoint));
+        mapView.getMap().move(cameraPosition);
     }
 
     @Override
