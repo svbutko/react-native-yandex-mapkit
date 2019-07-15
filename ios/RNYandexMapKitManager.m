@@ -108,6 +108,11 @@ RCT_EXPORT_METHOD(navigateToRegion: (nonnull NSNumber *)reactTag region: (nonnul
     [mapKitView navigateToRegion:params isAnimated:isAnimated];
 }
 
+RCT_EXPORT_METHOD(navigateToBoundingBox: (nonnull NSNumber *)reactTag northEastRegion: (nonnull NSDictionary *)northEastRegion southWestRegions: (nonnull NSDictionary *)southWestRegions)
+{
+    [mapKitView navigateToBoundingBox:northEastRegion southWestRegions:southWestRegions];
+}
+
 RCT_EXPORT_METHOD(navigateToUserLocation: (nonnull NSNumber *)reactTag)
 {
     [mapKitView navigateToUserLocation];

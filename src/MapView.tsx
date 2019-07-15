@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {MapViewProps, Region} from "react-native-yandex-mapkit";
+import {MapViewProps, Region, LatLng} from "react-native-yandex-mapkit";
 import {findNodeHandle, NativeModules, requireNativeComponent, UIManager} from "react-native";
 
 const RNYandexMapKit = requireNativeComponent("RNYandexMapKit");
@@ -74,6 +74,14 @@ export class MapView extends Component<MapViewProps> {
             findNodeHandle(this),
             UIManager.RNYandexMapKit.Commands.navigateToRegion,
             [region, isAnimated],
+        );
+    }
+
+    public navigateToBoundingBox(northEastPoint: LatLng, southWestPoint: LatLng): void {
+        UIManager.dispatchViewManagerCommand(
+            findNodeHandle(this),
+            UIManager.RNYandexMapKit.Commands.navigateToBoundingBox,
+            [northEastPoint, southWestPoint],
         );
     }
 }

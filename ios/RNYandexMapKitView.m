@@ -359,6 +359,25 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
     }];
 }
 
+- (void) navigateToBoundingBox:(NSDictionary *)northEastRegion southWestRegions:(NSDictionary *)southWestRegions {
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        double neLatitude = [[northEastRegion objectForKey:@"latitude"] doubleValue];
+        double neLongitude = [[northEastRegion objectForKey:@"longitude"] doubleValue];
+
+        YMKPoint* northEastPoint = [YMKPoint pointWithLatitude:neLatitude longitude:neLongitude];
+
+        double swLatitude = [[southWestRegions objectForKey:@"latitude"] doubleValue];
+        double swLongitude = [[southWestRegions objectForKey:@"longitude"] doubleValue];
+
+        YMKPoint* southWestPoint = [YMKPoint pointWithLatitude:swLatitude longitude:swLongitude];
+
+        YMKBoundingBox* boundingBox = [YMKBoundingBox boundingBoxWithSouthWest:southWestPoint northEast:northEastPoint];
+        YMKCameraPosition* cameraPosition = [self.map.mapWindow.map cameraPositionWithBoundingBox:boundingBox];
+
+        [self.map.mapWindow.map moveWithCameraPosition:cameraPosition];
+    }];
+}
+
 - (YMKPoint*) getDeviceLocation
 {
     YMKUserLocationLayer* userLocationLayer = _map.mapWindow.map.userLocationLayer;

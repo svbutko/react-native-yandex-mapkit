@@ -31,6 +31,7 @@ import com.yandex.mapkit.directions.driving.DrivingOptions;
 import com.yandex.mapkit.directions.driving.DrivingRoute;
 import com.yandex.mapkit.directions.driving.DrivingRouter;
 import com.yandex.mapkit.directions.driving.DrivingSession;
+import com.yandex.mapkit.geometry.BoundingBox;
 import com.yandex.mapkit.geometry.LinearRing;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.geometry.Polygon;
@@ -75,6 +76,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final int ZOOM_IN = 2;
     public static final int ZOOM_OUT = 3;
     public static final int NAVIGATE_TO_USER_LOCATION = 4;
+    public static final int NAVIGATE_TO_BOUNDING_BOX = 5;
 
     public static final String PROP_MARKERS = "markers";
     public static final String PROP_INITIAL_REGION = "initialRegion";
@@ -367,8 +369,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public void setNavigateToCoordinates(ReadableMap region, boolean isAnimated) {
         double latitude = region.getDouble("latitude");
         double longitude = region.getDouble("longitude");
-        double latitudeDelta = region.getDouble("latitudeDelta");
-        double longitudeDelta = region.getDouble("longitudeDelta");
 
         Point point = new Point(latitude, longitude);
 
@@ -437,8 +437,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public void setInitialRegion(MapView view, ReadableMap region) {
         double latitude = region.getDouble("latitude");
         double longitude = region.getDouble("longitude");
-        double latitudeDelta = region.getDouble("latitudeDelta");
-        double longitudeDelta = region.getDouble("longitudeDelta");
 
         Point point = new Point(latitude, longitude);
 
@@ -584,6 +582,20 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     }
 
+    public void navigateToBoundingBox(ReadableMap northEastRegion, ReadableMap southWestRegions) {
+        double neLatitude = northEastRegion.getDouble("latitude");
+        double neLongitude = northEastRegion.getDouble("longitude");
+
+        Point northEastPoint = new Point(neLatitude, neLongitude);
+
+        double swLatitude = southWestRegions.getDouble("latitude");
+        double swLongitude = southWestRegions.getDouble("longitude");
+
+        Point southWestPoint = new Point(swLatitude, swLongitude);
+
+        mapView.getMap().cameraPosition(new BoundingBox(southWestPoint, northEastPoint));
+    }
+
     @Override
     public void receiveCommand(MapView mapView, int commandId, @Nullable ReadableArray args) {
         super.receiveCommand(mapView, commandId, args);
@@ -600,6 +612,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             case NAVIGATE_TO_USER_LOCATION:
                 this.navigateToUserLocation();
                 return;
+            case NAVIGATE_TO_BOUNDING_BOX:
+                this.navigateToBoundingBox(args.getMap(0), args.getMap(1));
+                return;
             default:
                 throw new IllegalArgumentException(String.format(
                         "Unsupported command %d received by %s.",
@@ -615,18 +630,20 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 "navigateToRegion", NAVIGATE_TO_REGION,
                 "zoomIn", ZOOM_IN,
                 "zoomOut", ZOOM_OUT,
-                "navigateToUserLocation", NAVIGATE_TO_USER_LOCATION
+                "navigateToUserLocation", NAVIGATE_TO_USER_LOCATION,
+                "navigateToBoundingBox", NAVIGATE_TO_BOUNDING_BOX,
         );
 
         return map;
     }
 
-    public static <K, V> Map<K, V> CreateMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+    public static <K, V> Map<K, V> CreateMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
         Map map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
         map.put(k3, v3);
         map.put(k4, v4);
+        map.put(k5, v5);
 
         return map;
     }

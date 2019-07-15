@@ -1,5 +1,7 @@
 /*tslint:disable:interface-name*/
 
+import {Region} from "react-native-yandex-mapkit";
+
 declare module "react-native-yandex-mapkit" {
     import React, {Component} from "react";
     import {StyleProp, ViewStyle} from "react-native";
@@ -21,6 +23,7 @@ declare module "react-native-yandex-mapkit" {
         public static setApiKey(apiKey: string): void;
         public static setLocale(locale: string): void;
         public navigateToRegion(region: Region, isAnimated?: boolean): void;
+        public navigateToBoundingBox(northEastPoint: LatLng, southWestPoint: LatLng): void;
         public zoomIn(): void;
         public zoomOut(): void;
         public navigateToUserLocation(): void;
