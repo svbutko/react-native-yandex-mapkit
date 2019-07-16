@@ -78,6 +78,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final int NAVIGATE_TO_USER_LOCATION = 4;
     public static final int NAVIGATE_TO_BOUNDING_BOX = 5;
 
+    public static final String PROP_BOUNDING_BOX = "boundingBox";
     public static final String PROP_MARKERS = "markers";
     public static final String PROP_INITIAL_REGION = "initialRegion";
     public static final String PROP_POLYGONS = "polygons";
@@ -443,6 +444,14 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         view.getMap().move(new CameraPosition(point, 10.0f, 0.0f, 0.0f));
     }
 
+    @ReactProp(name = PROP_BOUNDING_BOX)
+    public void setBoundingBox(MapView view, ReadableMap boundingBox) {
+        ReadableMap northEastMap = boundingBox.getMap("northEastPoint");
+        ReadableMap southWestMap = boundingBox.getMap("southWestPoint");
+
+        this.navigateToBoundingBox(northEastMap, southWestMap, view);
+    }
+
     @ReactProp(name = PROP_SEARCH_LOCATION, defaultBoolean = false)
     public void setShouldSearchLocation(MapView view, boolean shouldSearch) {
         shouldSearchLocation = shouldSearch;
@@ -582,7 +591,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     }
 
-    public void navigateToBoundingBox(ReadableMap northEastRegion, ReadableMap southWestRegions) {
+    public void navigateToBoundingBox(ReadableMap northEastRegion, ReadableMap southWestRegions, @Nullable MapView view) {
         double neLatitude = northEastRegion.getDouble("latitude");
         double neLongitude = northEastRegion.getDouble("longitude");
 
@@ -593,8 +602,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
         Point southWestPoint = new Point(swLatitude, swLongitude);
 
-        CameraPosition cameraPosition = mapView.getMap().cameraPosition(new BoundingBox(southWestPoint, northEastPoint));
-        mapView.getMap().move(cameraPosition);
+        MapView map = view != null ? view : mapView;
+        CameraPosition cameraPosition = map.getMap().cameraPosition(new BoundingBox(southWestPoint, northEastPoint));
+        map.getMap().move(cameraPosition);
     }
 
     @Override
@@ -614,7 +624,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 this.navigateToUserLocation();
                 return;
             case NAVIGATE_TO_BOUNDING_BOX:
-                this.navigateToBoundingBox(args.getMap(0), args.getMap(1));
+                this.navigateToBoundingBox(args.getMap(0), args.getMap(1), null);
                 return;
             default:
                 throw new IllegalArgumentException(String.format(

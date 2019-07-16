@@ -102,6 +102,11 @@ RCT_CUSTOM_VIEW_PROPERTY(initialRegion, NSDictionary, RNYandexMapKitView)
     [view.map.mapWindow.map moveWithCameraPosition:cameraPos];
 }
 
+RCT_CUSTOM_VIEW_PROPERTY(boundingBox, NSDictionary, RNYandexMapKitView)
+{
+    [view navigateToBoundingBox:[json valueForKey:@"northEastPoint"] southWestRegions:[json valueForKey:@"southWestPoint"]];
+}
+
 
 RCT_EXPORT_METHOD(navigateToRegion: (nonnull NSNumber *)reactTag region: (nonnull NSDictionary *)params isAnimated: (BOOL)isAnimated)
 {

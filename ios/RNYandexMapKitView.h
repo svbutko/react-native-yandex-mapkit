@@ -36,6 +36,7 @@
 @property (nonatomic, copy) NSArray* markers;
 @property (nonatomic, copy) NSArray* polygons;
 @property (nonatomic, copy) NSDictionary* initialRegion;
+@property (nonatomic, copy) NSDictionary* boundingBox;
 @property (nonatomic) BOOL searchLocation;
 @property (nonatomic, copy) NSArray* searchRoute;
 @property (nonatomic, copy) NSDictionary* searchMarker;

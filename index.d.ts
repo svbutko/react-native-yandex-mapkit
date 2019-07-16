@@ -17,6 +17,7 @@ declare module "react-native-yandex-mapkit" {
         searchRoute?: MarkerProps[];
         searchMarker?: MarkerProps;
         style?: StyleProp<ViewStyle>;
+        boundingBox?: BoundingBox;
     }
 
     export default class MapView extends Component<Partial<MapViewProps>> {
@@ -27,6 +28,11 @@ declare module "react-native-yandex-mapkit" {
         public zoomIn(): void;
         public zoomOut(): void;
         public navigateToUserLocation(): void;
+    }
+
+    export interface BoundingBox {
+        northEastPoint: LatLng;
+        southWestPoint: LatLng;
     }
 
     export interface Polygon {
