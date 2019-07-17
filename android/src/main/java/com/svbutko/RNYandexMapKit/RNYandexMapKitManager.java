@@ -83,6 +83,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final String PROP_INITIAL_REGION = "initialRegion";
     public static final String PROP_POLYGONS = "polygons";
     public static final String PROP_ON_MARKER_PRESS = "onMarkerPress";
+    public static final String PROP_ON_POLYGON_PRESS = "onPolygonPress";
     public static final String PROP_ON_MAP_PRESS = "onMapPress";
     public static final String PROP_ON_LOCATION_SEARCH = "onLocationSearch";
     public static final String PROP_SEARCH_LOCATION = "searchLocation";
@@ -194,7 +195,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     private MapObjectTapListener mapObjectTapListener = new MapObjectTapListener() {
         @Override
         public boolean onMapObjectTap(@NonNull MapObject mapObject, @NonNull Point point) {
-            if (mapObject instanceof PlacemarkMapObject) {
+            if (mapObject instanceof PlacemarkMapObject || mapObject instanceof PolygonMapObject) {
                 WritableMap writableMap = Arguments.createMap();
                 Object userData = mapObject.getUserData();
 
@@ -211,7 +212,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 writableMap.putDouble("latitude", point.getLatitude());
                 writableMap.putDouble("longitude", point.getLongitude());
 
-                sendNativeEvent(PROP_ON_MARKER_PRESS, writableMap, mapView.getId(), context);
+                String eventName = mapObject instanceof PlacemarkMapObject ? PROP_ON_MARKER_PRESS : PROP_ON_POLYGON_PRESS;
+
+                sendNativeEvent(eventName, writableMap, mapView.getId(), context);
                 return true;
             }
             return false;
@@ -483,6 +486,11 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 rect.setStrokeColor(Color.rgb(0, 148, 113));
                 rect.setStrokeWidth(1.0f);
                 rect.setFillColor(Color.argb(85, 0, 148, 113));
+                rect.addTapListener(mapObjectTapListener);
+
+                if (polygon.hasKey("userData") && polygon.getString("identifier") != null) {
+                    rect.setUserData(new MarkerUserData(polygon.getString("identifier")));
+                }
             }
         }
     }
@@ -666,6 +674,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 .put(PROP_ON_MAP_PRESS, MapBuilder.of("registrationName", PROP_ON_MAP_PRESS))
                 .put(PROP_ON_MARKER_PRESS, MapBuilder.of("registrationName", PROP_ON_MARKER_PRESS))
                 .put(PROP_ON_LOCATION_SEARCH, MapBuilder.of("registrationName", PROP_ON_LOCATION_SEARCH))
+                .put(PROP_ON_POLYGON_PRESS, MapBuilder.of("registrationName", PROP_ON_POLYGON_PRESS))
                 .build();
     }
 

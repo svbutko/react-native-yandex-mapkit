@@ -12,6 +12,7 @@ RCT_EXPORT_VIEW_PROPERTY(onLocationSearch, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onMapPress, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onLocationError, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onMarkerPress, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPolygonPress, RCTBubblingEventBlock)
 
 RCT_CUSTOM_VIEW_PROPERTY(searchLocation, BOOL, RNYandexMapKitView) {
     if ([json  isEqual: @(YES)]) {
@@ -86,7 +87,9 @@ RCT_CUSTOM_VIEW_PROPERTY(polygons, NSArray, RNYandexMapKitView)
             [rectPoints addObject:point];
         }
 
-        [view addPolygon:rectPoints];
+        NSString *identifier = [jsPolygon objectForKey:@"identifier"];
+
+        [view addPolygon:rectPoints identifier: identifier];
     }
 }
 

@@ -22,6 +22,7 @@
 @property (nonatomic) RCTBubblingEventBlock onLocationError;
 @property (nonatomic) RCTBubblingEventBlock onMapPress;
 @property (nonatomic) RCTBubblingEventBlock onMarkerPress;
+@property (nonatomic) RCTBubblingEventBlock onPolygonPress;
 
 @property (strong, nonatomic) YMKSearchManager* searchManager;
 @property (nonatomic) CLLocationManager* locationManager;
@@ -52,7 +53,7 @@
 + (NSString*) userLocationImage;
 
 - (void) addMarkerWithJSON: (NSMutableDictionary *)json;
-- (void) addPolygon: (NSMutableArray*)rectPoints;
+- (void) addPolygon: (NSMutableArray*)rectPoints identifier: (NSString*)identifier;
 - (void) setSearchLocation: (BOOL)json;
 - (void) setSearchMarker:(NSDictionary *)searchMarker;
 

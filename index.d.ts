@@ -1,7 +1,5 @@
 /*tslint:disable:interface-name*/
 
-import {Region} from "react-native-yandex-mapkit";
-
 declare module "react-native-yandex-mapkit" {
     import React, {Component} from "react";
     import {StyleProp, ViewStyle} from "react-native";
@@ -11,6 +9,7 @@ declare module "react-native-yandex-mapkit" {
         polygons?: Polygon[];
         initialRegion?: Region;
         onMarkerPress?: (data: MarkerData) => void;
+        onPolygonPress?: (data: MarkerData) => void;
         onMapPress?: (data: any) => void;
         onLocationSearch?: (data: any) => void;
         searchLocation?: boolean;
@@ -36,6 +35,8 @@ declare module "react-native-yandex-mapkit" {
     }
 
     export interface Polygon {
+        identifier?: string;
+        userData?: object;
         points: LatLng[];
     }
 

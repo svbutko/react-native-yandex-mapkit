@@ -232,7 +232,7 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
     }
 }
 
-- (void) addPolygon: (NSMutableArray*)rectPoints {
+- (void) addPolygon: (NSMutableArray*)rectPoints identifier: (NSString*)identifier {
     YMKPolygon *jsPolygon = [YMKPolygon polygonWithOuterRing:[YMKLinearRing linearRingWithPoints:rectPoints] innerRings:[[NSMutableArray alloc]init]];
 
     YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
@@ -250,6 +250,13 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
                                           green:148.0f/255.0f
                                            blue:113.0f/255.0f
                                           alpha:0.3f]];
+
+    if (identifier != nil) {
+        NSMutableDictionary * userData = [[NSMutableDictionary alloc]init];
+        [userData setValue:identifier forKey:@"id"];
+        [polygon setUserData: userData];
+        [polygon addTapListenerWithTapListener: self];
+    }
 }
 
 - (void) clearMarkers {
@@ -401,7 +408,7 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
 
 
 - (BOOL)onMapObjectTapWithMapObject:(YMKMapObject *)mapObject point:(YMKPoint *)point {
-    if ([mapObject isKindOfClass:[YMKPlacemarkMapObject class]]) {
+    if ([mapObject isKindOfClass:[YMKPlacemarkMapObject class]] || [mapObject isKindOfClass:[YMKPolygonMapObject class]]) {
         NSMutableDictionary* resultObject = [[NSMutableDictionary alloc]init];
         id userData = [mapObject userData];
 
@@ -418,7 +425,11 @@ static NSString* userLocationImage = @"iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFe
         [resultObject setValue:[NSNumber numberWithDouble:[point latitude]] forKey:@"latitude"];
         [resultObject setValue:[NSNumber numberWithDouble:[point longitude]] forKey:@"longitude"];
 
-        self.onMarkerPress(resultObject);
+        if ([mapObject isKindOfClass:[YMKPlacemarkMapObject class]]) {
+            self.onMarkerPress(resultObject);
+        } else {
+            self.onPolygonPress(resultObject);
+        }
 
         return true;
     }

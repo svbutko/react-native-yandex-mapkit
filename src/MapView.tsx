@@ -11,6 +11,7 @@ export class MapView extends Component<MapViewProps> {
         this._onLocationSearch = this._onLocationSearch.bind(this);
         this._onMarkerPress = this._onMarkerPress.bind(this);
         this._onMapPress = this._onMapPress.bind(this);
+        this._onPolygonPress = this._onPolygonPress.bind(this);
     }
 
     public static setApiKey(apiKey: string): void {
@@ -28,6 +29,7 @@ export class MapView extends Component<MapViewProps> {
                 onLocationSearch={this._onLocationSearch}
                 onMarkerPress={this._onMarkerPress}
                 onMapPress={this._onMapPress}
+                onPolygonPress={this._onPolygonPress}
             />
         );
     }
@@ -42,6 +44,10 @@ export class MapView extends Component<MapViewProps> {
 
     private _onMapPress(event: any): void {
         this.props.onMapPress && this.props.onMapPress(event.nativeEvent);
+    }
+
+    private _onPolygonPress(event: any): void {
+        this.props._onPolygonPress && this.props._onPolygonPress(event.nativeEvent);
     }
 
     public navigateToUserLocation(): void {
