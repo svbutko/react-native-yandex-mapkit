@@ -47,7 +47,7 @@ export class MapView extends Component<MapViewProps> {
     }
 
     private _onPolygonPress(event: any): void {
-        this.props._onPolygonPress && this.props._onPolygonPress(event.nativeEvent);
+        this.props.onPolygonPress && this.props.onPolygonPress(event.nativeEvent);
     }
 
     public navigateToUserLocation(): void {
