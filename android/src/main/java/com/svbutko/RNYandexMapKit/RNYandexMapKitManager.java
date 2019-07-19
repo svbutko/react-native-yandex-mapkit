@@ -1,10 +1,16 @@
 package com.svbutko.RNYandexMapKit;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -395,7 +401,13 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         if (ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this.context.getCurrentActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         } else {
-            this.navigateToLocationAfterChecks();
+            final LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                this.showLocationAlert();
+            } else {
+                this.navigateToLocationAfterChecks();
+            }
         }
     }
 
@@ -425,6 +437,26 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         } catch (Exception e) {
             //TODO: Solve the error
         }
+    }
+
+    private void showLocationAlert() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Для определения местоположения требуется включить GPS, включить?")
+                .setCancelable(false)
+                .setPositiveButton("Включить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     public void navigateToCoordinates(Point point, Boolean isAnimated) {
