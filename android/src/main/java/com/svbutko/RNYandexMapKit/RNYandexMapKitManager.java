@@ -130,6 +130,10 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     private Bitmap userLocationBitmapImage = BitmapFactory.decodeByteArray(userLocationDecodedString, 0, userLocationDecodedString.length);
     private ImageProvider userLocationImage = ImageProvider.fromBitmap(userLocationBitmapImage);
 
+    private byte[] disabledLocationDecodedString = Base64.decode("iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAMQSURBVFhHzZc9iBNBGIZnN7928ap4CgYbPW0UBO9AECyOXKkIaivcIWhtZWktCIqiIMgVXnFgZ0IKG4WcIJhGoxYSQc9Ul3TmP77v5tuQy01mN7ld9IHjZr7M9z0zO9ndjNXv99W/wJc4n88dxb/ldrt9stVqHUfOHP4OMt2yVN2yrJ14PP41Fot9xrhCNrvyw0k0YBRT2O12b/V6vVUUTUnYCCZXt237WSQSeWSagFZMIeI3Op3ObQjnJDwVmMBONBp9iKvxXDeBPWJKIXyCpKyE9gVq5VHr5rh8l5hS7OEm9uushAIBNT+g5pVRuS3/HSkuz4ugpYQ1WZsOCQ3EDOBLdB/7ecGJhgBr0+HK3RUv41t4WdqhIY5ltq1c7jUv8UvMaIkBE6lUSqXTaTU/f5iXz4lh/9T29i9VrVZVvV53YibgKsJ1neJV9J8OwnoSiaRaWDgB6SGJ6KlWf6ty+YtqNhsSmciajRmcko4WSpeWFj2lhGM4ljkm6LRxN12VvhauNJk8ID1vOJY5Jui04/FYWvp7GOyp90rHYQ5zJ0Hn8D7WkclkpDU9XrlG8SyrdfHKNYrD5P8U876cFa9co7hSqUhrerxyjWI+Amu1mvT8wxyvx6eNZ+03aWsplUqq0fgjPW84ljkm6LTx62BT+lr43C0Wt3ztN8dwrNezmk5fLwmXIN5OwprzWkTyKxQ6I8FQgesjXJds/g5C47HEQ4cuOt1vdQEz+STt0BBHgW1HLKt+wHaY0OH+0hy9jwt4Qb+VduBIbWe1ZCjmTPBbaF26gcPa7mrJ+JOrgHPShrQDQ2oOV0u0Rxhclg3McFFC+wK1tlDr2uhqycRDGxJKSPB1QpwEatRR4/S4lIxfagfZ7zvSnRnW0EmJVizsa791+zqK9lK78JLPcmSddDQdxSgmlOOJ4/voirF7jqQ6PMVE5DkUXJCQFowpY8yKl5T4EhORv0HhYxLaBT77js8u+pES32Ii8ncQHJGQA2I/ETvvV0qmEhPKm83m3VarfY59HEfeJxKJe9NIydTiYFDqL8DWsbxO0qz4AAAAAElFTkSuQmCC", Base64.DEFAULT);
+    private Bitmap disabledLocationBitmapImage = BitmapFactory.decodeByteArray(disabledLocationDecodedString, 0, disabledLocationDecodedString.length);
+    private ImageProvider disabledLocationImage = ImageProvider.fromBitmap(disabledLocationBitmapImage);
+
     private Session.SearchListener searchListener = new Session.SearchListener() {
         @Override
         public void onSearchResponse(@NonNull Response response) {
@@ -567,6 +571,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 return selectedPinImage;
             case "user":
                 return userLocationImage;
+            case "disabled":
+                return disabledLocationImage;
             default:
                 return pinImage;
         }

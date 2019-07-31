@@ -30,14 +30,14 @@
     "@types/jest": "^24.0.15",
     "@types/react-native": "^0.57.64",
     "react": "16.8.6",
-    "react-native": "0.59.9",
+    "react-native": "0.59.10",
     "babel-jest": "24.8.0",
     "jest": "24.8.0",
     "metro-react-native-babel-preset": "0.54.1",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
     "tslint-react": "^4.0.0",
-    "typescript": "3.5.2"
+    "typescript": "3.5.3"
   },
   "repository": {
     "type": "git",

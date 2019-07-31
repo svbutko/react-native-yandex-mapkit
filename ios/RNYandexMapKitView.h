@@ -51,6 +51,7 @@
 + (NSString*) locationImage;
 + (NSString*) selectedPinImage;
 + (NSString*) userLocationImage;
++ (NSString*) disabledImage;
 
 - (void) addMarkerWithJSON: (NSMutableDictionary *)json;
 - (void) addPolygon: (NSMutableArray*)rectPoints identifier: (NSString*)identifier;

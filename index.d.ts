@@ -59,7 +59,7 @@ declare module "react-native-yandex-mapkit" {
 
     export interface MarkerProps {
         identifier?: string;
-        icon?: "pin" | "selectedPin" | "user";
+        icon?: "pin" | "selectedPin" | "user" | "disabled";
         opacity?: number;
         coordinate: LatLng;
         centerOffset?: Point;
