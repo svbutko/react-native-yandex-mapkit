@@ -16,5 +16,13 @@ RCT_EXPORT_METHOD(setApiKey: (nonnull NSString *) apiKey) {
     [YMKMapKit setApiKey: apiKey];
 }
 
+RCT_EXPORT_METHOD(setLocale: (nonnull NSString *) language) {
+    [YRTI18nManagerFactory setLocaleWithLanguage:language localeUpdateDelegate:^(NSError *error) {
+        if (error != nil) {
+            NSLog(@"setLocale update delegate error: %@", [error localizedDescription]);
+        }
+    }];
+}
+
 @end
-  
+
