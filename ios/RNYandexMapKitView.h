@@ -23,6 +23,7 @@
 @property (nonatomic) RCTBubblingEventBlock onMapPress;
 @property (nonatomic) RCTBubblingEventBlock onMarkerPress;
 @property (nonatomic) RCTBubblingEventBlock onPolygonPress;
+@property (nonatomic) RCTBubblingEventBlock onSuggestionsFetch;
 
 @property (strong, nonatomic) YMKSearchManager* searchManager;
 @property (nonatomic) CLLocationManager* locationManager;
@@ -61,6 +62,7 @@
 - (void) navigateToUserLocation;
 - (void) zoomIn;
 - (void) zoomOut;
+- (void) fetchSuggestions: (NSString*)query;
 - (void) navigateToRegion: (NSDictionary*)region isAnimated: (BOOL)isAnimated;
 - (void) navigateToBoundingBox: (NSDictionary*)northEastRegion southWestRegions: (NSDictionary*)southWestRegions;
 - (YMKPoint*) getDeviceLocation;

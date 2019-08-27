@@ -13,6 +13,7 @@ RCT_EXPORT_VIEW_PROPERTY(onMapPress, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onLocationError, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onMarkerPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPolygonPress, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onSuggestionsFetch, RCTBubblingEventBlock)
 
 RCT_CUSTOM_VIEW_PROPERTY(searchLocation, BOOL, RNYandexMapKitView) {
     if ([json  isEqual: @(YES)]) {
@@ -134,6 +135,11 @@ RCT_EXPORT_METHOD(zoomIn: (nonnull NSNumber *)reactTag)
 RCT_EXPORT_METHOD(zoomOut: (nonnull NSNumber *)reactTag)
 {
     [mapKitView zoomOut];
+}
+
+RCT_EXPORT_METHOD(fetchSuggestions: (nonnull NSNumber *)reactTag query: (nonnull NSString *)query)
+{
+    [mapKitView fetchSuggestions:query];
 }
 
 - (instancetype) init

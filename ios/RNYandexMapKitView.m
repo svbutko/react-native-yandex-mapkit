@@ -142,7 +142,6 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
         YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
 
         _userSearchPlacemark = [mapObjects addPlacemarkWithPoint:point image:[userLocationImage decodeBase64ToImage]];
-
     }
 }
 
@@ -348,6 +347,32 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
         YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
 
         [self.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
+    }];
+}
+
+- (void) fetchSuggestions:(NSString *)query {
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [_searchManager cancelSuggest];
+        if ([query length] != 0) {
+            YMKBoundingBox* boundingBox = [YMKBoundingBox boundingBoxWithSouthWest:[YMKPoint pointWithLatitude:-180.0 longitude:41.151416124] northEast:[YMKPoint pointWithLatitude:180.0 longitude:81.2504]];
+
+            YMKSearchOptions* options = [YMKSearchOptions new];
+            options.searchTypes = YMKSearchTypeGeo;
+
+            [_searchManager suggestWithText:query window:boundingBox searchOptions:options responseHandler:^(NSArray<YMKSuggestItem *> *suggestItems, NSError *error) {
+                NSMutableArray* suggestResult = [[NSMutableArray alloc]init];
+                unsigned long suggestionsSize = MIN(5, [suggestItems count]);
+
+                for (int i = 0; i < suggestionsSize; i++) {
+                    [suggestResult addObject:@{@"value": [[suggestItems objectAtIndex:i] displayText]}];
+                }
+
+                NSMutableDictionary* resultObject = [[NSMutableDictionary alloc]init];
+                [resultObject setValue:suggestResult forKey:@"suggestions"];
+
+                self.onSuggestionsFetch(resultObject);
+            }];
+        }
     }];
 }
 
