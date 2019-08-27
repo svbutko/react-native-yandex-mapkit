@@ -12,6 +12,7 @@ export class MapView extends Component<MapViewProps> {
         this._onMarkerPress = this._onMarkerPress.bind(this);
         this._onMapPress = this._onMapPress.bind(this);
         this._onPolygonPress = this._onPolygonPress.bind(this);
+        this._onSuggestionsFetch = this._onSuggestionsFetch.bind(this);
     }
 
     public static setApiKey(apiKey: string): void {
@@ -30,8 +31,13 @@ export class MapView extends Component<MapViewProps> {
                 onMarkerPress={this._onMarkerPress}
                 onMapPress={this._onMapPress}
                 onPolygonPress={this._onPolygonPress}
+                onSuggestionsFetch={this._onSuggestionsFetch}
             />
         );
+    }
+
+    private _onSuggestionsFetch(event: any): void {
+        this.props.onSuggestionsFetch && this.props.onSuggestionsFetch(event.nativeEvent);
     }
 
     private _onLocationSearch(event: any): void {
@@ -88,6 +94,14 @@ export class MapView extends Component<MapViewProps> {
             findNodeHandle(this),
             UIManager.RNYandexMapKit.Commands.navigateToBoundingBox,
             [northEastPoint, southWestPoint],
+        );
+    }
+
+    public fetchSuggestions(query: string): void {
+        UIManager.dispatchViewManagerCommand(
+            findNodeHandle(this),
+            UIManager.RNYandexMapKit.Commands.fetchSuggestions,
+            [query],
         );
     }
 }

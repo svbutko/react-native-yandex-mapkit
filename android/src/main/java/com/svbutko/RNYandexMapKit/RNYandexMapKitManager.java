@@ -15,11 +15,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
+import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
@@ -57,7 +59,9 @@ import com.yandex.mapkit.search.SearchFactory;
 import com.yandex.mapkit.search.SearchManager;
 import com.yandex.mapkit.search.SearchManagerType;
 import com.yandex.mapkit.search.SearchOptions;
+import com.yandex.mapkit.search.SearchType;
 import com.yandex.mapkit.search.Session;
+import com.yandex.mapkit.search.SuggestItem;
 import com.yandex.mapkit.user_location.UserLocationLayer;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
@@ -83,6 +87,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final int ZOOM_OUT = 3;
     public static final int NAVIGATE_TO_USER_LOCATION = 4;
     public static final int NAVIGATE_TO_BOUNDING_BOX = 5;
+    public static final int FETCH_SUGGESTIONS = 6;
 
     public static final String PROP_BOUNDING_BOX = "boundingBox";
     public static final String PROP_MARKERS = "markers";
@@ -92,6 +97,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final String PROP_ON_POLYGON_PRESS = "onPolygonPress";
     public static final String PROP_ON_MAP_PRESS = "onMapPress";
     public static final String PROP_ON_LOCATION_SEARCH = "onLocationSearch";
+    public static final String PROP_ON_SUGGESTIONS_FETCH = "onSuggestionsFetch";
     public static final String PROP_SEARCH_LOCATION = "searchLocation";
     public static final String PROP_SEARCH_ROUTE = "searchRoute";
     public static final String PROP_SEARCH_MARKER = "searchMarker";
@@ -112,6 +118,12 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     private List<PolylineMapObject> polylinesList = new ArrayList<PolylineMapObject>();
 
     private PlacemarkMapObject userSearchPlacemark;
+    private final BoundingBox suggestionBoundingBox = new BoundingBox(
+            new Point(-180.0, 41.151416124),
+            new Point(180.0, 81.2504)
+    ); //Russia
+
+    private final SearchOptions suggestionSearchOptions = new SearchOptions().setSearchTypes(SearchType.GEO.value);
 
     //TODO: Add icon prop
     private byte[] imageDecodedString = Base64.decode("iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMS40E0BoxAAAAkhJREFUWEftl79O40AQxv0OkMROZCAHytsc75AKIfEOQEFDAz21BQ0F0h05TgEhCoKERIEQgoIKJCr665b5otkwux4HW7FJcVj6SZv5832eOI7XgTFmKqhBn4uZmZjo9prRzsHS/HHSWbgiHpNO+wFrxJBDDWo1DR81aIHI37C+/SdqvNHa5AG16KH12BNQg2g6q9XWe80wt6EPeqFBa/UEUgEUnoSNnhSZBNZKmTsfUPC7FV3LxjJgTcfcMe1FjXPZUCasPTIfmfYb9UNZWAXsMTS3xrgN1OIK6A6NaRHTL/DSS2bS/9E2g7VV87C5MQRrxLRaDfaKC017t7Ji/r280Am7B2LIaT0ZdAM6g10l4dBfbJvXJFFN7YEcalCraUjgGRw3w1ctKYFg3gO1moYEnviq1aRlsPxz7KT+gVr0aFqST42LTGuPPFN/G6f4/4yn9qsGRabOMy0I6Fn5qCUkZf9zwTM4rde2tKRGWf/V8MRXXeiROOnTienCmLY74Y2XqAz2iqe3EWBjbPLuvILSYY+Prc8XTj2c1jfGFujCKywN1nZ3mcK8yqlH0wLfmF5dZve9holhTX1Db0EBbU0GsnESWMsxBc4HCwqLvCFmwRopU5AKWKihjOvtXFeJGgTUhOt94AnlhnvVaYEatKDxJCr+yso9maZADUogwK+ZqokP1441BWrQB0IkeC8NNLjmU1OgBjUg+KsVPUkjCedymQI1mAWE6b58loaAY7lNgRocBwyO5lp7Sad9C47i5l5RU6AGq8cE77senOxoWv4fAAAAAElFTkSuQmCC", Base64.DEFAULT);
@@ -653,6 +665,36 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         map.getMap().move(cameraPosition);
     }
 
+    private SearchManager.SuggestListener suggestListener = new SearchManager.SuggestListener() {
+        @Override
+        public void onSuggestResponse(@NonNull List<SuggestItem> suggestItems) {
+            WritableMap writableMap = Arguments.createMap();
+            WritableArray suggestResult = Arguments.createArray();
+
+            int suggestionsSize = Math.min(5, suggestItems.size());
+
+            for (int i = 0; i < suggestionsSize; i++) {
+                WritableMap suggestionObject = Arguments.createMap();
+                suggestionObject.putString("value", suggestItems.get(i).getDisplayText());
+                suggestResult.pushMap(suggestionObject);
+            }
+
+            writableMap.putArray("suggestions", suggestResult);
+            sendNativeEvent(PROP_ON_SUGGESTIONS_FETCH, writableMap, mapView.getId(), context);
+        }
+
+        @Override
+        public void onSuggestError(@NonNull Error error) {
+        }
+    };
+
+    public void fetchSuggestions(String query) {
+        searchManager.cancelSuggest();
+        if (query != null && !query.equals("")) {
+            searchManager.suggest(query, suggestionBoundingBox, suggestionSearchOptions, suggestListener);
+        }
+    }
+
     @Override
     public void receiveCommand(MapView mapView, int commandId, @Nullable ReadableArray args) {
         super.receiveCommand(mapView, commandId, args);
@@ -672,6 +714,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             case NAVIGATE_TO_BOUNDING_BOX:
                 this.navigateToBoundingBox(args.getMap(0), args.getMap(1), null);
                 return;
+            case FETCH_SUGGESTIONS:
+                this.fetchSuggestions(args.getString(0));
+                return;
             default:
                 throw new IllegalArgumentException(String.format(
                         "Unsupported command %d received by %s.",
@@ -688,19 +733,21 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 "zoomIn", ZOOM_IN,
                 "zoomOut", ZOOM_OUT,
                 "navigateToUserLocation", NAVIGATE_TO_USER_LOCATION,
-                "navigateToBoundingBox", NAVIGATE_TO_BOUNDING_BOX
+                "navigateToBoundingBox", NAVIGATE_TO_BOUNDING_BOX,
+                "fetchSuggestions", FETCH_SUGGESTIONS
         );
 
         return map;
     }
 
-    public static <K, V> Map<K, V> CreateMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+    public static <K, V> Map<K, V> CreateMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
         Map map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
         map.put(k3, v3);
         map.put(k4, v4);
         map.put(k5, v5);
+        map.put(k6, v6);
 
         return map;
     }
@@ -713,6 +760,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 .put(PROP_ON_MARKER_PRESS, MapBuilder.of("registrationName", PROP_ON_MARKER_PRESS))
                 .put(PROP_ON_LOCATION_SEARCH, MapBuilder.of("registrationName", PROP_ON_LOCATION_SEARCH))
                 .put(PROP_ON_POLYGON_PRESS, MapBuilder.of("registrationName", PROP_ON_POLYGON_PRESS))
+                .put(PROP_ON_SUGGESTIONS_FETCH, MapBuilder.of("registrationName", PROP_ON_SUGGESTIONS_FETCH))
                 .build();
     }
 

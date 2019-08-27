@@ -12,6 +12,7 @@ declare module "react-native-yandex-mapkit" {
         onPolygonPress?: (data: MarkerData) => void;
         onMapPress?: (data: any) => void;
         onLocationSearch?: (data: any) => void;
+        onSuggestionsFetch?: (data: SuggestionsResult) => void;
         searchLocation?: boolean;
         searchRoute?: MarkerProps[];
         searchMarker?: MarkerProps;
@@ -27,6 +28,7 @@ declare module "react-native-yandex-mapkit" {
         public zoomIn(): void;
         public zoomOut(): void;
         public navigateToUserLocation(): void;
+        public fetchSuggestions(query: string): void;
     }
 
     export interface BoundingBox {
@@ -66,6 +68,14 @@ declare module "react-native-yandex-mapkit" {
         calloutOffset?: Point;
         draggable?: boolean;
         userData?: object;
+    }
+
+    export interface SuggestionsResult {
+        suggestions: Suggestion[];
+    }
+
+    export interface Suggestion {
+        value: string;
     }
 
     export interface MarkerData extends LatLng {
