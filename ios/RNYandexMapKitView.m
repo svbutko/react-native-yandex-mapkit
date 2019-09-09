@@ -309,21 +309,13 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
 }
 
 - (void) navigateToUserLocation {
-    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        YMKPoint* point = [self getDeviceLocation];
+        YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:18 azimuth:0 tilt:0];
+        YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
 
-    if (status == kCLAuthorizationStatusNotDetermined) {
-        [self.locationManager requestWhenInUseAuthorization];
-    }
-
-    if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            YMKPoint* point = self.getDeviceLocation;
-            YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:18 azimuth:0 tilt:0];
-            YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
-
-            [self.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
-        }];
-    }
+        [self.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
+    }];
 }
 
 - (void) zoomIn {
