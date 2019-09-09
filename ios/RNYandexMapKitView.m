@@ -37,13 +37,11 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
     self.locationManager = [CLLocationManager new];
     self.locationManager.delegate = self;
 
-    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
-    if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
-        YMKUserLocationLayer* userLocationLayer = _map.mapWindow.map.userLocationLayer;
-        [userLocationLayer setEnabled: true];
-        [userLocationLayer setHeadingEnabled: true];
-        [userLocationLayer setObjectListenerWithObjectListener: self];
-    }
+    YMKUserLocationLayer* userLocationLayer = _map.mapWindow.map.userLocationLayer;
+    [userLocationLayer setEnabled: true];
+    [userLocationLayer setHeadingEnabled: true];
+    [userLocationLayer setObjectListenerWithObjectListener: self];
+
     _userLocationIcon = [locationImage decodeBase64ToImage];
     _zoom = 0;
 
@@ -408,14 +406,9 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
 
 - (YMKPoint*) getDeviceLocation
 {
-    YMKUserLocationLayer* userLocationLayer = _map.mapWindow.map.userLocationLayer;
-    _userLocationIcon = [locationImage decodeBase64ToImage];
-    [userLocationLayer setEnabled: true];
-    [userLocationLayer setHeadingEnabled: true];
-    [userLocationLayer setObjectListenerWithObjectListener: self];
-
-    YMKPoint* lastUserLocation = _map.mapWindow.map.userLocationLayer.cameraPosition.target;
+    YMKPoint* lastUserLocation = self.map.mapWindow.map.userLocationLayer.cameraPosition.target;
     YMKPoint* point = [YMKPoint pointWithLatitude:lastUserLocation.latitude longitude:lastUserLocation.longitude];
+
     return point;
 }
 
