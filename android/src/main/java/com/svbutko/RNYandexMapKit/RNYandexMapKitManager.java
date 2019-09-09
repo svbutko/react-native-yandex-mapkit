@@ -1,21 +1,14 @@
 package com.svbutko.RNYandexMapKit;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.location.LocationManager;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
-import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
@@ -79,7 +72,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements UserLocationObjectListener, ActivityCompat.OnRequestPermissionsResultCallback {
+public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements UserLocationObjectListener {
     public static final String REACT_CLASS = "RNYandexMapKit";
 
     public static final int NAVIGATE_TO_REGION = 1;
@@ -414,26 +407,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     }
 
     public void navigateToUserLocation() {
-        if (ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this.context.getCurrentActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        } else {
-            final LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                this.showLocationAlert();
-            } else {
-                this.navigateToLocationAfterChecks();
-            }
-        }
+        this.navigateToLocationAfterChecks();
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            this.navigateToLocationAfterChecks();
-        }
-    }
-
     private void navigateToLocationAfterChecks() {
         try {
             if (userLocationLayer == null) {
@@ -453,26 +428,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         } catch (Exception e) {
             //TODO: Solve the error
         }
-    }
-
-    private void showLocationAlert() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Для определения местоположения требуется включить GPS, включить?")
-                .setCancelable(false)
-                .setPositiveButton("Включить", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int id) {
-                        context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.show();
     }
 
     public void navigateToCoordinates(Point point, Boolean isAnimated) {
