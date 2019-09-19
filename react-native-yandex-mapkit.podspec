@@ -15,9 +15,10 @@ Pod::Spec.new do |s|
   s.source_files  = "ios/**/*.{h,m}"
 
   s.dependency 'React'
-  s.dependency 'YandexMapKit', '~> 3.3'
-  s.dependency 'YandexMapKitSearch', '~> 3.3'
-  s.dependency 'YandexMapKitDirections', '~> 3.3'
+  s.dependency 'YandexMapKit', '3.3'
+  s.dependency 'YandexMapKitSearch', '3.3'
+  s.dependency 'YandexMapKitDirections', '3.3'
+  s.dependency 'YandexRuntime', '3.3'
 end
 
   
