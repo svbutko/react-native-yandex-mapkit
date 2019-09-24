@@ -25,13 +25,14 @@ import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.GeoObject;
 import com.yandex.mapkit.GeoObjectCollection;
 import com.yandex.mapkit.MapKitFactory;
-import com.yandex.mapkit.RequestPoint;
-import com.yandex.mapkit.RequestPointType;
 import com.yandex.mapkit.directions.DirectionsFactory;
+import com.yandex.mapkit.directions.driving.DrivingArrivalPoint;
 import com.yandex.mapkit.directions.driving.DrivingOptions;
 import com.yandex.mapkit.directions.driving.DrivingRoute;
 import com.yandex.mapkit.directions.driving.DrivingRouter;
 import com.yandex.mapkit.directions.driving.DrivingSession;
+import com.yandex.mapkit.directions.driving.RequestPoint;
+import com.yandex.mapkit.directions.driving.RequestPointType;
 import com.yandex.mapkit.geometry.BoundingBox;
 import com.yandex.mapkit.geometry.LinearRing;
 import com.yandex.mapkit.geometry.Point;
@@ -371,13 +372,16 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     private void submitRouteRequest(ArrayList<Point> points) {
         try {
             DrivingOptions options = new DrivingOptions();
-            ArrayList<RequestPoint> requestPoints = new ArrayList<>();
+            List<RequestPoint> requestPoints = new ArrayList<>();
 
             Point firstPoint = points.get(0);
             Point secondPoint = points.get(1);
 
-            requestPoints.add(new RequestPoint(firstPoint, RequestPointType.WAYPOINT, null));
-            requestPoints.add(new RequestPoint(secondPoint, RequestPointType.WAYPOINT, null));
+            List<Point> arrivingPoint = new ArrayList<>();
+            List<DrivingArrivalPoint> drivingArrivalPoint = new ArrayList<>();
+
+            requestPoints.add(new RequestPoint(firstPoint, arrivingPoint, drivingArrivalPoint, RequestPointType.WAYPOINT));
+            requestPoints.add(new RequestPoint(secondPoint, arrivingPoint, drivingArrivalPoint, RequestPointType.WAYPOINT));
 
             drivingRouter.requestRoutes(requestPoints, options, drivingRouteListener);
         } catch (Exception e) {
