@@ -633,8 +633,13 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         Point southWestPoint = new Point(swLatitude, swLongitude);
 
         MapView map = view != null ? view : mapView;
-        CameraPosition cameraPosition = map.getMap().cameraPosition(new BoundingBox(southWestPoint, northEastPoint));
-        map.getMap().move(cameraPosition);
+
+        try {
+            CameraPosition cameraPosition = map.getMap().cameraPosition(new BoundingBox(southWestPoint, northEastPoint));
+            map.getMap().move(cameraPosition);
+        } catch (Exception e) {
+            //TODO: Solve the error
+        }
     }
 
     private SearchManager.SuggestListener suggestListener = new SearchManager.SuggestListener() {
