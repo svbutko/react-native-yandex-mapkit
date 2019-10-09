@@ -43,7 +43,7 @@
 @property (nonatomic, copy) NSArray* searchRoute;
 @property (nonatomic, copy) NSDictionary* searchMarker;
 
-@property (weak) YMKMapView *map;
+@property (nonatomic) YMKMapView *map;
 @property (nonatomic) float zoom;
 
 @property (nonatomic) UIImage* userLocationIcon;
