@@ -56,6 +56,14 @@ export class MapView extends Component<MapViewProps> {
         this.props.onPolygonPress && this.props.onPolygonPress(event.nativeEvent);
     }
 
+    public stopMapKit(): void {
+        UIManager.dispatchViewManagerCommand(
+            findNodeHandle(this),
+            UIManager.RNYandexMapKit.Commands.stopMapKit,
+            [],
+        );
+    }
+
     public navigateToUserLocation(): void {
         UIManager.dispatchViewManagerCommand(
             findNodeHandle(this),

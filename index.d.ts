@@ -29,6 +29,7 @@ declare module "react-native-yandex-mapkit" {
         public zoomOut(): void;
         public navigateToUserLocation(): void;
         public fetchSuggestions(query: string): void;
+        public stopMapKit(): void;
     }
 
     export interface BoundingBox {

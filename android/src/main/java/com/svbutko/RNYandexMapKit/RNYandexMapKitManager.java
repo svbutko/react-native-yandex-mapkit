@@ -5,10 +5,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Base64;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import android.util.Base64;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
@@ -82,6 +83,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final int NAVIGATE_TO_USER_LOCATION = 4;
     public static final int NAVIGATE_TO_BOUNDING_BOX = 5;
     public static final int FETCH_SUGGESTIONS = 6;
+    public static final int STOP_MAPKIT = 7;
 
     public static final String PROP_BOUNDING_BOX = "boundingBox";
     public static final String PROP_MARKERS = "markers";
@@ -291,6 +293,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         return REACT_CLASS;
     }
 
+
     @Override
     public MapView createViewInstance(ThemedReactContext context) {
         RNYandexMapKitModule nativeModule = context.getNativeModule(RNYandexMapKitModule.class);
@@ -322,6 +325,16 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         mapView.onStart();
 
         return mapView;
+    }
+
+
+    private void stopMapKit() {
+        try {
+            mapView.onStop();
+            MapKitFactory.getInstance().onStop();
+        } catch (Exception e) {
+            //TODO: Solve the error
+        }
     }
 
     private void addUserLocationLayer() {
@@ -676,6 +689,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             case FETCH_SUGGESTIONS:
                 this.fetchSuggestions(args.getString(0));
                 return;
+            case STOP_MAPKIT:
+                this.stopMapKit();
+                return;
             default:
                 throw new IllegalArgumentException(String.format(
                         "Unsupported command %d received by %s.",
@@ -693,13 +709,14 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 "zoomOut", ZOOM_OUT,
                 "navigateToUserLocation", NAVIGATE_TO_USER_LOCATION,
                 "navigateToBoundingBox", NAVIGATE_TO_BOUNDING_BOX,
-                "fetchSuggestions", FETCH_SUGGESTIONS
+                "fetchSuggestions", FETCH_SUGGESTIONS,
+                "stopMapKit", STOP_MAPKIT
         );
 
         return map;
     }
 
-    public static <K, V> Map<K, V> CreateMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
+    public static <K, V> Map<K, V> CreateMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7) {
         Map map = new HashMap<K, V>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -707,6 +724,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         map.put(k4, v4);
         map.put(k5, v5);
         map.put(k6, v6);
+        map.put(k7, v7);
 
         return map;
     }
