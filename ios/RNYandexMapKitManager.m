@@ -6,6 +6,11 @@
     RNYandexMapKitView *mapKitView;
 };
 
++ (BOOL)requiresMainQueueSetup
+{
+    return YES;
+}
+
 RCT_EXPORT_MODULE();
 
 RCT_EXPORT_VIEW_PROPERTY(onLocationSearch, RCTBubblingEventBlock);
