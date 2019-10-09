@@ -398,9 +398,12 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
         YMKPoint* southWestPoint = [YMKPoint pointWithLatitude:swLatitude longitude:swLongitude];
 
         YMKBoundingBox* boundingBox = [YMKBoundingBox boundingBoxWithSouthWest:southWestPoint northEast:northEastPoint];
-        YMKCameraPosition* cameraPosition = [self.map.mapWindow.map cameraPositionWithBoundingBox:boundingBox];
-
-        [self.map.mapWindow.map moveWithCameraPosition:cameraPosition];
+        @try {
+            YMKCameraPosition* cameraPosition = [self.map.mapWindow.map cameraPositionWithBoundingBox:boundingBox];
+            [self.map.mapWindow.map moveWithCameraPosition:cameraPosition];
+        } @catch (NSException *exception) {
+            NSLog(@"Navigate To Bounding Box error");
+        }
     }];
 }
 
