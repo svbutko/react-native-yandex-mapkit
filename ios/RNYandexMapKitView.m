@@ -93,7 +93,7 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
                                                      NSString* location = [[NSString alloc]init];
 
                                                      if (descriptionLocation != nil) {
-                                                         location = [NSString stringWithFormat:@"%@/%@/%@", descriptionLocation, @", ", [geoObject name]];
+                                                         location = [NSString stringWithFormat:@"%@%@%@", descriptionLocation, @", ", [geoObject name]];
                                                      } else {
                                                          location = [geoObject name];
                                                      }
