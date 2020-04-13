@@ -4,12 +4,12 @@ declare module "react-native-yandex-mapkit" {
     import React, {Component} from "react";
     import {StyleProp, ViewStyle} from "react-native";
 
-    export interface MapViewProps {
-        markers?: MarkerProps[];
-        polygons?: Polygon[];
+    export interface MapViewProps<T, B> {
+        markers?: MarkerProps<T>[];
+        polygons?: Polygon<B>[];
         initialRegion?: Region;
-        onMarkerPress?: (data: MarkerData) => void;
-        onPolygonPress?: (data: MarkerData) => void;
+        onMarkerPress?: (data: MarkerData<T>) => void;
+        onPolygonPress?: (data: MarkerData<B>) => void;
         onMapPress?: (data: any) => void;
         onLocationSearch?: (data: any) => void;
         onSuggestionsFetch?: (data: SuggestionsResult) => void;
@@ -20,7 +20,7 @@ declare module "react-native-yandex-mapkit" {
         boundingBox?: BoundingBox;
     }
 
-    export default class MapView extends Component<Partial<MapViewProps>> {
+    export default class MapView<T, B> extends Component<Partial<MapViewProps<T, B>>> {
         public static setApiKey(apiKey: string): void;
         public static setLocale(locale: string): void;
         public navigateToRegion(region: Region, isAnimated?: boolean): void;
@@ -37,10 +37,12 @@ declare module "react-native-yandex-mapkit" {
         southWestPoint: LatLng;
     }
 
-    export interface Polygon {
+    export interface Polygon<B> {
         identifier?: string;
-        userData?: object;
+        userData?: B;
         points: LatLng[];
+        backgroundColor?: string;
+        borderColor?: string;
     }
 
     export interface Region {
@@ -60,7 +62,7 @@ declare module "react-native-yandex-mapkit" {
         y: number;
     }
 
-    export interface MarkerProps {
+    export interface MarkerProps<T> {
         identifier?: string;
         icon?: "pin" | "selectedPin" | "user" | "disabled";
         opacity?: number;
@@ -68,7 +70,7 @@ declare module "react-native-yandex-mapkit" {
         centerOffset?: Point;
         calloutOffset?: Point;
         draggable?: boolean;
-        userData?: object;
+        userData?: T;
     }
 
     export interface SuggestionsResult {
@@ -79,7 +81,7 @@ declare module "react-native-yandex-mapkit" {
         value: string;
     }
 
-    export interface MarkerData extends LatLng {
-        id?: string;
+    export interface MarkerData<B> extends LatLng {
+        data?: B;
     }
 }

@@ -1,6 +1,7 @@
 #import "RNYandexMapKitManager.h"
 #import "RNYandexMapKitView.h"
 #import <YandexMapKit/YMKMap.h>
+#import <React/RCTConvert.h>;
 
 @implementation RNYandexMapKitManager {
     RNYandexMapKitView *mapKitView;
@@ -95,7 +96,25 @@ RCT_CUSTOM_VIEW_PROPERTY(polygons, NSArray, RNYandexMapKitView)
 
         NSString *identifier = [jsPolygon objectForKey:@"identifier"];
 
-        [view addPolygon:rectPoints identifier: identifier];
+        UIColor *backgroundColor = [UIColor colorWithRed:0.0f/255.0f
+                                                  green:148.0f/255.0f
+                                                   blue:113.0f/255.0f
+                                                  alpha:0.3f];
+        NSString *backgroundColorString = [jsPolygon objectForKey:@"backgroundColor"];
+        if (backgroundColorString != nil) {
+            backgroundColor = [RCTConvert UIColor:backgroundColorString];
+        }
+
+        UIColor *borderColor = [UIColor colorWithRed:0.0f/255.0f
+                                              green:148.0f/255.0f
+                                               blue:113.0f/255.0f
+                                              alpha:1.0f];
+        NSString *borderColorString = [jsPolygon objectForKey:@"borderColor"];
+        if (borderColorString != nil) {
+            borderColor = [RCTConvert UIColor:borderColorString];
+        }
+
+        [view addPolygon:rectPoints identifier: identifier backgroundColor: backgroundColor borderColor: borderColor dict: jsPolygon];
     }
 }
 

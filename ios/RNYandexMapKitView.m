@@ -211,10 +211,8 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
     [placemark setIconWithImage: icon];
     [placemark setOpacity: 1];
     [placemark setDraggable: false];
-    if (dict[@"id"] != nil) {
-        NSMutableDictionary * userData = [[NSMutableDictionary alloc]init];
-        [userData setValue:dict[@"id"] forKey:@"id"];
-        [placemark setUserData: userData];
+    if (dict[@"userData"] != nil) {
+        [placemark setUserData: dict[@"userData"]];
     }
     [placemark addTapListenerWithTapListener: self];
 }
@@ -233,7 +231,7 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
     }
 }
 
-- (void) addPolygon: (NSMutableArray*)rectPoints identifier: (NSString*)identifier {
+- (void) addPolygon: (NSMutableArray*)rectPoints identifier: (NSString*)identifier backgroundColor: (UIColor*)backgroundColor borderColor: (UIColor*)borderColor dict: (NSDictionary*)dict {
     YMKPolygon *jsPolygon = [YMKPolygon polygonWithOuterRing:[YMKLinearRing linearRingWithPoints:rectPoints] innerRings:[[NSMutableArray alloc]init]];
 
     YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
@@ -241,21 +239,12 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
 
     [_mapPolygons addObject:polygon];
 
-    [polygon setStrokeColor:[UIColor colorWithRed:0.0f/255.0f
-                                             green:148.0f/255.0f
-                                              blue:113.0f/255.0f
-                                             alpha:1.0f]];
-
+    [polygon setStrokeColor:borderColor];
     [polygon setStrokeWidth:1.0f];
-    [polygon setFillColor:[UIColor colorWithRed:0.0f/255.0f
-                                          green:148.0f/255.0f
-                                           blue:113.0f/255.0f
-                                          alpha:0.3f]];
+    [polygon setFillColor:backgroundColor];
 
-    if (identifier != nil) {
-        NSMutableDictionary * userData = [[NSMutableDictionary alloc]init];
-        [userData setValue:identifier forKey:@"id"];
-        [polygon setUserData: userData];
+    if (dict[@"userData"] != nil) {
+        [polygon setUserData: dict[@"userData"]];
         [polygon addTapListenerWithTapListener: self];
     }
 }
@@ -431,9 +420,7 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
 
         if (userData != nil) {
             @try {
-                NSString *markerId = (NSString *)[userData objectForKey:@"id"];
-
-                [resultObject setValue:markerId forKey:@"id"];
+                [resultObject setValue:userData forKey:@"data"];
             } @catch (NSException *exception) {
                 //TODO: Solve the error
             }

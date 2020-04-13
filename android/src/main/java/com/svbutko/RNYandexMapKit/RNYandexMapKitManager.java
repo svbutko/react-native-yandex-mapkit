@@ -1,5 +1,6 @@
 package com.svbutko.RNYandexMapKit;
 
+import android.os.Bundle;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,6 +18,8 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -220,7 +223,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 if (userData != null) {
                     try {
                         MarkerUserData markerUserData = (MarkerUserData)userData;
-                        writableMap.putString("id", markerUserData.getId());
+                        writableMap.putMap("data", markerUserData.getData());
                     }
                     catch (Exception e) {
 
@@ -292,7 +295,6 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public String getName() {
         return REACT_CLASS;
     }
-
 
     @Override
     public MapView createViewInstance(ThemedReactContext context) {
@@ -503,13 +505,24 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 PolygonMapObject rect = view.getMap().getMapObjects().addPolygon(new Polygon(new LinearRing(rectPoints), new ArrayList<LinearRing>()));
                 polygonsList.add(rect);
 
-                rect.setStrokeColor(Color.rgb(0, 148, 113));
+                if (polygon.hasKey("backgroundColor") && !polygon.isNull("backgroundColor")) {
+                    int backgroundColor = (int)polygon.getDouble("backgroundColor");
+                    rect.setFillColor(backgroundColor);
+                } else {
+                    rect.setFillColor(Color.argb(85, 0, 148, 113));
+                }
+
+                if (polygon.hasKey("borderColor") && !polygon.isNull("borderColor")) {
+                    int borderColor = (int)polygon.getDouble("borderColor");
+                    rect.setStrokeColor(borderColor);
+                } else {
+                    rect.setStrokeColor(Color.rgb(0, 148, 113));
+                }
                 rect.setStrokeWidth(1.0f);
-                rect.setFillColor(Color.argb(85, 0, 148, 113));
                 rect.addTapListener(mapObjectTapListener);
 
                 if (polygon.hasKey("userData") && polygon.getString("identifier") != null) {
-                    rect.setUserData(new MarkerUserData(polygon.getString("identifier")));
+                    rect.setUserData(new MarkerUserData(polygon.getString("identifier"), polygon.getMap("userData")));
                 }
             }
         }
@@ -541,7 +554,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 mark.addTapListener(mapObjectTapListener);
 
                 if (marker.hasKey("userData") && marker.getString("identifier") != null) {
-                    mark.setUserData(new MarkerUserData(marker.getString("identifier")));
+                    mark.setUserData(new MarkerUserData(marker.getString("identifier"), marker.getMap("userData")));
                 }
             }
         }
@@ -753,13 +766,25 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
 class MarkerUserData {
     private String id;
+    private ReadableMap data;
 
-    public MarkerUserData(String id) {
+    public MarkerUserData(String id, ReadableMap data) {
+        this.data = data;
         this.id = id;
     }
 
     public String getId() {
         return this.id;
+    }
+
+    public WritableMap getData() {
+        return this.toMap(this.data);
+    }
+
+    private WritableMap toMap(ReadableMap readableMap) {
+         Bundle bundle = Arguments.toBundle(readableMap);
+
+         return Arguments.fromBundle(bundle);
     }
 
     @Override

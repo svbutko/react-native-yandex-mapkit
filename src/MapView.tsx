@@ -1,12 +1,14 @@
-import React, {Component} from "react";
-import {MapViewProps, Region, LatLng} from "react-native-yandex-mapkit";
-import {findNodeHandle, NativeModules, requireNativeComponent, UIManager} from "react-native";
+import React, {PureComponent} from "react";
+import {MapViewProps, Region, LatLng, MarkerProps, Polygon} from "react-native-yandex-mapkit";
+import {findNodeHandle, NativeModules, requireNativeComponent, UIManager, processColor} from "react-native";
 
 const RNYandexMapKit = requireNativeComponent("RNYandexMapKit");
 const RNYandexMapKitModule = NativeModules.RNYandexMapKit;
 
-export class MapView extends Component<MapViewProps> {
-    constructor(props: MapViewProps) {
+interface IProps extends MapViewProps<MarkerProps<undefined>, Polygon<undefined>> {}
+
+export class MapView extends PureComponent<IProps> {
+    constructor(props: IProps) {
         super(props);
         this._onLocationSearch = this._onLocationSearch.bind(this);
         this._onMarkerPress = this._onMarkerPress.bind(this);
@@ -24,9 +26,16 @@ export class MapView extends Component<MapViewProps> {
     }
 
     render(): JSX.Element {
+        const processedPolygons = this.props.polygons && this.props.polygons.map(item => ({
+            ...item,
+            backgroundColor: processColor(item.backgroundColor),
+            borderColor: processColor(item.borderColor),
+        }));
+
         return (
             <RNYandexMapKit
                 {...this.props}
+                polygons={processedPolygons}
                 onLocationSearch={this._onLocationSearch}
                 onMarkerPress={this._onMarkerPress}
                 onMapPress={this._onMapPress}

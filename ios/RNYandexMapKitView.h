@@ -55,7 +55,7 @@
 + (NSString*) disabledImage;
 
 - (void) addMarkerWithJSON: (NSMutableDictionary *)json;
-- (void) addPolygon: (NSMutableArray*)rectPoints identifier: (NSString*)identifier;
+- (void) addPolygon: (NSMutableArray*)rectPoints identifier: (NSString*)identifier backgroundColor: (UIColor*)backgroundColor borderColor: (UIColor*)borderColor dict: (NSDictionary*)dict;
 - (void) setSearchLocation: (BOOL)json;
 - (void) setSearchMarker:(NSDictionary *)searchMarker;
 
