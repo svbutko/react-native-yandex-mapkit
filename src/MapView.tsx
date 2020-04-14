@@ -5,9 +5,14 @@ import {findNodeHandle, NativeModules, requireNativeComponent, UIManager, proces
 const RNYandexMapKit = requireNativeComponent("RNYandexMapKit");
 const RNYandexMapKitModule = NativeModules.RNYandexMapKit;
 
-interface IProps extends MapViewProps<MarkerProps<undefined>, Polygon<undefined>> {}
+interface IProps extends MapViewProps<any, any> {}
 
 export class MapView extends PureComponent<IProps> {
+    private lastMarkers: MarkerProps<any>[] | undefined;
+    private lastPolygons: Polygon<any>[] | undefined;
+    private markers: MarkerProps<any>[] | undefined;
+    private polygons: Polygon<any>[] | undefined;
+
     constructor(props: IProps) {
         super(props);
         this._onLocationSearch = this._onLocationSearch.bind(this);
@@ -26,16 +31,13 @@ export class MapView extends PureComponent<IProps> {
     }
 
     render(): JSX.Element {
-        const processedPolygons = this.props.polygons && this.props.polygons.map(item => ({
-            ...item,
-            backgroundColor: processColor(item.backgroundColor),
-            borderColor: processColor(item.borderColor),
-        }));
+        this.cacheProps();
 
         return (
             <RNYandexMapKit
                 {...this.props}
-                polygons={processedPolygons}
+                markers={this.markers}
+                polygons={this.polygons}
                 onLocationSearch={this._onLocationSearch}
                 onMarkerPress={this._onMarkerPress}
                 onMapPress={this._onMapPress}
@@ -43,6 +45,31 @@ export class MapView extends PureComponent<IProps> {
                 onSuggestionsFetch={this._onSuggestionsFetch}
             />
         );
+    }
+
+    private cacheProps(): void {
+        const {polygons, markers, disableMarkers} = this.props;
+        if (this.lastPolygons != polygons) {
+            this.polygons = this.props.polygons && this.props.polygons.map(item => ({
+                ...item,
+                backgroundColor: processColor(item.backgroundColor) as any,
+                borderColor: processColor(item.borderColor) as any,
+            }));
+        }
+        this.lastPolygons = polygons;
+        if (disableMarkers) {
+            if (this.lastMarkers != markers) {
+                this.markers = this.props.markers && this.props.markers.map(item => {
+                    const {userData, ...markerProps} = item;
+
+                    return markerProps;
+                });
+            } else {
+                this.lastMarkers = markers;
+            }
+        } else {
+            this.markers = markers;
+        }
     }
 
     private _onSuggestionsFetch(event: any): void {

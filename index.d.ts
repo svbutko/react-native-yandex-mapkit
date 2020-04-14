@@ -18,6 +18,7 @@ declare module "react-native-yandex-mapkit" {
         searchMarker?: MarkerProps;
         style?: StyleProp<ViewStyle>;
         boundingBox?: BoundingBox;
+        disableMarkers?: boolean;
     }
 
     export default class MapView<T, B> extends Component<Partial<MapViewProps<T, B>>> {
