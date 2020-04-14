@@ -38,7 +38,6 @@ declare module "react-native-yandex-mapkit" {
     }
 
     export interface Polygon<B> {
-        identifier?: string;
         userData?: B;
         points: LatLng[];
         backgroundColor?: string;
@@ -63,7 +62,6 @@ declare module "react-native-yandex-mapkit" {
     }
 
     export interface MarkerProps<T> {
-        identifier?: string;
         icon?: "pin" | "selectedPin" | "user" | "disabled";
         opacity?: number;
         coordinate: LatLng;

@@ -35,7 +35,6 @@ RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
 
     for (NSDictionary *jsMarker in json) {
         NSDictionary *coordinates = [jsMarker objectForKey:@"coordinate"];
-        NSString *identifier = [jsMarker objectForKey:@"identifier"];
         NSString *icon = [jsMarker objectForKey:@"icon"];
 
         double latitude = [[coordinates valueForKey:@"latitude"] doubleValue];
@@ -48,8 +47,9 @@ RCT_CUSTOM_VIEW_PROPERTY(markers, NSArray, RNYandexMapKitView)
         [marker setValue:latitudeNumber forKey:@"latitude"];
         [marker setValue:longitudeNumber forKey:@"longitude"];
 
-        if (identifier != nil) {
-            [marker setValue:identifier forKey:@"id"];
+        NSDictionary* userData = [jsMarker objectForKey:@"userData"];
+        if (userData != nil) {
+            [marker setValue:userData forKey:@"userData"];
         }
 
         if (icon != nil) {
@@ -94,8 +94,6 @@ RCT_CUSTOM_VIEW_PROPERTY(polygons, NSArray, RNYandexMapKitView)
             [rectPoints addObject:point];
         }
 
-        NSString *identifier = [jsPolygon objectForKey:@"identifier"];
-
         UIColor *backgroundColor = [UIColor colorWithRed:0.0f/255.0f
                                                   green:148.0f/255.0f
                                                    blue:113.0f/255.0f
@@ -114,7 +112,7 @@ RCT_CUSTOM_VIEW_PROPERTY(polygons, NSArray, RNYandexMapKitView)
             borderColor = [RCTConvert UIColor:borderColorString];
         }
 
-        [view addPolygon:rectPoints identifier: identifier backgroundColor: backgroundColor borderColor: borderColor dict: jsPolygon];
+        [view addPolygon:rectPoints backgroundColor: backgroundColor borderColor: borderColor dict: jsPolygon];
     }
 }
 

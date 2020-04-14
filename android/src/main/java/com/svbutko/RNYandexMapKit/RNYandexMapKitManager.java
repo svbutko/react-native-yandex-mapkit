@@ -521,8 +521,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 rect.setStrokeWidth(1.0f);
                 rect.addTapListener(mapObjectTapListener);
 
-                if (polygon.hasKey("userData") && polygon.getString("identifier") != null) {
-                    rect.setUserData(new MarkerUserData(polygon.getString("identifier"), polygon.getMap("userData")));
+                if (polygon.hasKey("userData")) {
+                    rect.setUserData(new MarkerUserData(polygon.getMap("userData")));
                 }
             }
         }
@@ -553,8 +553,8 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 mark.setDraggable(draggable);
                 mark.addTapListener(mapObjectTapListener);
 
-                if (marker.hasKey("userData") && marker.getString("identifier") != null) {
-                    mark.setUserData(new MarkerUserData(marker.getString("identifier"), marker.getMap("userData")));
+                if (marker.hasKey("userData")) {
+                    mark.setUserData(new MarkerUserData(marker.getMap("userData")));
                 }
             }
         }
@@ -765,16 +765,10 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 }
 
 class MarkerUserData {
-    private String id;
     private ReadableMap data;
 
-    public MarkerUserData(String id, ReadableMap data) {
+    public MarkerUserData(ReadableMap data) {
         this.data = data;
-        this.id = id;
-    }
-
-    public String getId() {
-        return this.id;
     }
 
     public WritableMap getData() {
@@ -785,10 +779,5 @@ class MarkerUserData {
          Bundle bundle = Arguments.toBundle(readableMap);
 
          return Arguments.fromBundle(bundle);
-    }
-
-    @Override
-    public String toString() {
-        return "id: " + this.id;
     }
 }

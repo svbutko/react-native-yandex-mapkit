@@ -211,8 +211,10 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
     [placemark setIconWithImage: icon];
     [placemark setOpacity: 1];
     [placemark setDraggable: false];
-    if (dict[@"userData"] != nil) {
-        [placemark setUserData: dict[@"userData"]];
+
+    NSDictionary* userData = dict[@"userData"];
+    if (userData != nil) {
+        [placemark setUserData: userData];
     }
     [placemark addTapListenerWithTapListener: self];
 }
@@ -231,7 +233,7 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
     }
 }
 
-- (void) addPolygon: (NSMutableArray*)rectPoints identifier: (NSString*)identifier backgroundColor: (UIColor*)backgroundColor borderColor: (UIColor*)borderColor dict: (NSDictionary*)dict {
+- (void) addPolygon: (NSMutableArray*)rectPoints backgroundColor: (UIColor*)backgroundColor borderColor: (UIColor*)borderColor dict: (NSDictionary*)dict {
     YMKPolygon *jsPolygon = [YMKPolygon polygonWithOuterRing:[YMKLinearRing linearRingWithPoints:rectPoints] innerRings:[[NSMutableArray alloc]init]];
 
     YMKMapObjectCollection* mapObjects = _map.mapWindow.map.mapObjects;
@@ -243,10 +245,11 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
     [polygon setStrokeWidth:1.0f];
     [polygon setFillColor:backgroundColor];
 
-    if (dict[@"userData"] != nil) {
-        [polygon setUserData: dict[@"userData"]];
-        [polygon addTapListenerWithTapListener: self];
+    NSDictionary* userData = dict[@"userData"];
+    if (userData != nil) {
+        [polygon setUserData: userData];
     }
+    [polygon addTapListenerWithTapListener: self];
 }
 
 - (void) clearMarkers {
