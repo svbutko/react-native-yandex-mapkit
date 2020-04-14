@@ -519,10 +519,10 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                     rect.setStrokeColor(Color.rgb(0, 148, 113));
                 }
                 rect.setStrokeWidth(1.0f);
-                rect.addTapListener(mapObjectTapListener);
 
                 if (polygon.hasKey("userData")) {
                     rect.setUserData(new MarkerUserData(polygon.getMap("userData")));
+                    rect.addTapListener(mapObjectTapListener);
                 }
             }
         }
@@ -551,10 +551,10 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 mark.setOpacity(opacity);
                 mark.setIcon(icon);
                 mark.setDraggable(draggable);
-                mark.addTapListener(mapObjectTapListener);
 
                 if (marker.hasKey("userData")) {
                     mark.setUserData(new MarkerUserData(marker.getMap("userData")));
+                    mark.addTapListener(mapObjectTapListener);
                 }
             }
         }

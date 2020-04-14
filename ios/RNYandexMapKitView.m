@@ -215,8 +215,8 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
     NSDictionary* userData = dict[@"userData"];
     if (userData != nil) {
         [placemark setUserData: userData];
+        [placemark addTapListenerWithTapListener: self];
     }
-    [placemark addTapListenerWithTapListener: self];
 }
 
 - (UIImage*) getImageByID:(NSString *)imageId {
@@ -248,8 +248,8 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
     NSDictionary* userData = dict[@"userData"];
     if (userData != nil) {
         [polygon setUserData: userData];
+        [polygon addTapListenerWithTapListener: self];
     }
-    [polygon addTapListenerWithTapListener: self];
 }
 
 - (void) clearMarkers {
