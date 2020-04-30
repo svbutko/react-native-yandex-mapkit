@@ -131,16 +131,16 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
         } @catch (NSException *exception) {
             //TODO: Solve the error
         }
-
-        NSDictionary *coordinates = [searchMarker objectForKey:@"coordinate"];
-
-        double latitude = [[coordinates valueForKey:@"latitude"] doubleValue];
-        double longitude = [[coordinates valueForKey:@"longitude"] doubleValue];
-
-        YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
-
-        _userSearchPlacemark = [mapObjects addPlacemarkWithPoint:point image:[userLocationImage decodeBase64ToImage]];
     }
+
+    NSDictionary *coordinates = [searchMarker objectForKey:@"coordinate"];
+
+    double latitude = [[coordinates valueForKey:@"latitude"] doubleValue];
+    double longitude = [[coordinates valueForKey:@"longitude"] doubleValue];
+
+    YMKPoint* point = [YMKPoint pointWithLatitude:latitude longitude:longitude];
+
+    _userSearchPlacemark = [mapObjects addPlacemarkWithPoint:point image:[userLocationImage decodeBase64ToImage]];
 }
 
 - (void) onMapLongTapWithMap:(YMKMap *)map point:(nonnull YMKPoint *)point
