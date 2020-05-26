@@ -20,6 +20,7 @@ RCT_EXPORT_VIEW_PROPERTY(onLocationError, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onMarkerPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPolygonPress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onSuggestionsFetch, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onDeviceLocationSearch, RCTBubblingEventBlock)
 
 RCT_CUSTOM_VIEW_PROPERTY(searchLocation, BOOL, RNYandexMapKitView) {
     if ([json  isEqual: @(YES)]) {
@@ -147,6 +148,11 @@ RCT_EXPORT_METHOD(navigateToBoundingBox: (nonnull NSNumber *)reactTag northEastR
 RCT_EXPORT_METHOD(navigateToUserLocation: (nonnull NSNumber *)reactTag)
 {
     [mapKitView navigateToUserLocation];
+}
+
+RCT_EXPORT_METHOD(getUserLocation: (nonnull NSNumber *)reactTag)
+{
+    [mapKitView getUserLocation];
 }
 
 RCT_EXPORT_METHOD(zoomIn: (nonnull NSNumber *)reactTag)

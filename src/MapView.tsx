@@ -20,6 +20,7 @@ export class MapView extends PureComponent<IProps> {
         this._onMapPress = this._onMapPress.bind(this);
         this._onPolygonPress = this._onPolygonPress.bind(this);
         this._onSuggestionsFetch = this._onSuggestionsFetch.bind(this);
+        this._onDeviceLocationSearch = this._onDeviceLocationSearch.bind(this);
     }
 
     public static setApiKey(apiKey: string): void {
@@ -42,6 +43,7 @@ export class MapView extends PureComponent<IProps> {
                 onMarkerPress={this._onMarkerPress}
                 onMapPress={this._onMapPress}
                 onPolygonPress={this._onPolygonPress}
+                onDeviceLocationSearch={this._onDeviceLocationSearch}
                 onSuggestionsFetch={this._onSuggestionsFetch}
             />
         );
@@ -92,6 +94,10 @@ export class MapView extends PureComponent<IProps> {
         this.props.onPolygonPress && this.props.onPolygonPress(event.nativeEvent);
     }
 
+    private _onDeviceLocationSearch(event: any): void {
+        this.props.onDeviceLocationSearch && this.props.onDeviceLocationSearch(event.nativeEvent);
+    }
+
     public stopMapKit(): void {
         UIManager.dispatchViewManagerCommand(
             findNodeHandle(this),
@@ -104,6 +110,14 @@ export class MapView extends PureComponent<IProps> {
         UIManager.dispatchViewManagerCommand(
             findNodeHandle(this),
             UIManager.RNYandexMapKit.Commands.navigateToUserLocation,
+            [],
+        );
+    }
+
+    public getUserLocation(): void {
+        UIManager.dispatchViewManagerCommand(
+            findNodeHandle(this),
+            UIManager.RNYandexMapKit.Commands.getUserLocation,
             [],
         );
     }

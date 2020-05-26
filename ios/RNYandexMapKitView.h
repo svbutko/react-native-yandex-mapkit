@@ -24,6 +24,7 @@
 @property (nonatomic) RCTBubblingEventBlock onMarkerPress;
 @property (nonatomic) RCTBubblingEventBlock onPolygonPress;
 @property (nonatomic) RCTBubblingEventBlock onSuggestionsFetch;
+@property (nonatomic) RCTBubblingEventBlock onDeviceLocationSearch;
 
 @property (strong, nonatomic) YMKSearchManager* searchManager;
 @property (nonatomic) CLLocationManager* locationManager;
@@ -60,6 +61,7 @@
 - (void) setSearchMarker:(NSDictionary *)searchMarker;
 
 - (void) navigateToUserLocation;
+- (void) getUserLocation;
 - (void) zoomIn;
 - (void) zoomOut;
 - (void) fetchSuggestions: (NSString*)query;

@@ -13,6 +13,7 @@ declare module "react-native-yandex-mapkit" {
         onMapPress?: (data: any) => void;
         onLocationSearch?: (data: any) => void;
         onSuggestionsFetch?: (data: SuggestionsResult) => void;
+        onDeviceLocationSearch?: (data: {location: string, latitude: number, longitude: number}) => void;
         searchLocation?: boolean;
         searchRoute?: MarkerProps[];
         searchMarker?: MarkerProps;
@@ -29,6 +30,7 @@ declare module "react-native-yandex-mapkit" {
         public zoomIn(): void;
         public zoomOut(): void;
         public navigateToUserLocation(): void;
+        public getUserLocation(): void;
         public fetchSuggestions(query: string): void;
         public stopMapKit(): void;
     }

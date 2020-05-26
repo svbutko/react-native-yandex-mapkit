@@ -77,6 +77,16 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+class SearchResult {
+    public WritableMap map;
+    public Point location;
+
+    public SearchResult(WritableMap map, Point location) {
+        this.map = map;
+        this.location = location;
+    }
+}
+
 public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements UserLocationObjectListener {
     public static final String REACT_CLASS = "RNYandexMapKit";
 
@@ -87,6 +97,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final int NAVIGATE_TO_BOUNDING_BOX = 5;
     public static final int FETCH_SUGGESTIONS = 6;
     public static final int STOP_MAPKIT = 7;
+    public static final int GET_USER_LOCATION = 8;
 
     public static final String PROP_BOUNDING_BOX = "boundingBox";
     public static final String PROP_MARKERS = "markers";
@@ -96,6 +107,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     public static final String PROP_ON_POLYGON_PRESS = "onPolygonPress";
     public static final String PROP_ON_MAP_PRESS = "onMapPress";
     public static final String PROP_ON_LOCATION_SEARCH = "onLocationSearch";
+    public static final String PROP_ON_DEVICE_LOCATION_SEARCH = "onDeviceLocationSearch";
     public static final String PROP_ON_SUGGESTIONS_FETCH = "onSuggestionsFetch";
     public static final String PROP_SEARCH_LOCATION = "searchLocation";
     public static final String PROP_SEARCH_ROUTE = "searchRoute";
@@ -107,6 +119,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
     private SearchManager searchManager;
     private Session searchSession;
+    private Session userSearchSession;
 
     private DrivingRouter drivingRouter;
 
@@ -149,36 +162,10 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         @Override
         public void onSearchResponse(@NonNull Response response) {
             try {
-                List<GeoObjectCollection.Item> searchResultList = response.getCollection().getChildren();
-
-                if(searchResultList.size() > 0) {
-                    GeoObject geoObject = searchResultList.get(0).getObj();
-                    Point resultLocation = geoObject.getGeometry().get(0).getPoint();
-
-                    if (resultLocation != null) {
-                        MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
-                        if (userSearchPlacemark != null) {
-                            try {
-                                mapObjects.remove(userSearchPlacemark);
-                            } catch (Exception e) {
-                                //TODO: Solve the error
-                            }
-                        }
-                        userSearchPlacemark = mapObjects.addPlacemark(resultLocation, userLocationImage);
-                        WritableMap writableMap = Arguments.createMap();
-
-                        String descriptionLocation = geoObject.getDescriptionText();
-                        String location = geoObject.getName();
-
-                        if (descriptionLocation != null) {
-                            location = descriptionLocation + ", " + location;
-                        }
-
-                        writableMap.putString("location", location);
-                        writableMap.putDouble("latitude", resultLocation.getLatitude());
-                        writableMap.putDouble("longitude", resultLocation.getLongitude());
-                        sendNativeEvent(PROP_ON_LOCATION_SEARCH, writableMap, mapView.getId(), context);
-                    }
+                SearchResult result = onSearchResult(response);
+                if (result != null) {
+                    resetUserMarker(result.location);
+                    sendNativeEvent(PROP_ON_LOCATION_SEARCH, result.map, mapView.getId(), context);
                 }
             } catch (Exception e) {
                 //TODO: Solve the error
@@ -187,19 +174,78 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
         @Override
         public void onSearchError(@NonNull Error error) {
-            String errorMessage = "Unknown search error";
-            if (error instanceof RemoteError) {
-                errorMessage = "Remote server error";
-            } else if (error instanceof NetworkError) {
-                errorMessage = "Network error";
-            }
-
-            WritableMap writableMap = Arguments.createMap();
-            writableMap.putString("error", errorMessage);
-
-            sendNativeEvent(PROP_ON_LOCATION_SEARCH, writableMap, mapView.getId(), context);
+            onSearchErrorCustom(error);
         }
     };
+
+    private Session.SearchListener userSearchListener = new Session.SearchListener() {
+        @Override
+        public void onSearchResponse(@NonNull Response response) {
+            try {
+                SearchResult result = onSearchResult(response);
+                if (result != null) {
+                    sendNativeEvent(PROP_ON_DEVICE_LOCATION_SEARCH, result.map, mapView.getId(), context);
+                }
+            } catch (Exception e) {
+                //TODO: Solve the error
+            }
+        }
+
+        @Override
+        public void onSearchError(@NonNull Error error) {
+            onSearchErrorCustom(error);
+        }
+    };
+
+    private @Nullable SearchResult onSearchResult(@NonNull Response response) {
+        List<GeoObjectCollection.Item> searchResultList = response.getCollection().getChildren();
+
+        if(searchResultList.size() > 0) {
+            GeoObject geoObject = searchResultList.get(0).getObj();
+            Point resultLocation = geoObject.getGeometry().get(0).getPoint();
+
+            if (resultLocation != null) {
+                WritableMap writableMap = Arguments.createMap();
+
+                String location = geoObject.getName();
+
+                writableMap.putString("location", location);
+                writableMap.putDouble("latitude", resultLocation.getLatitude());
+                writableMap.putDouble("longitude", resultLocation.getLongitude());
+                return new SearchResult(writableMap, resultLocation);
+            }
+        }
+
+        return null;
+    }
+
+    private void resetUserMarker(@Nullable Point location) {
+        if (location != null) {
+            MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
+            if (userSearchPlacemark != null) {
+                try {
+                    mapObjects.remove(userSearchPlacemark);
+                } catch (Exception e) {
+                    //TODO: Solve the error
+                }
+            }
+            userSearchPlacemark = mapObjects.addPlacemark(location, userLocationImage);
+        }
+    }
+
+    private void onSearchErrorCustom(Error error) {
+        String errorMessage = "Unknown search error";
+        if (error instanceof RemoteError) {
+            errorMessage = "Remote server error";
+        } else if (error instanceof NetworkError) {
+            errorMessage = "Network error";
+        }
+
+        WritableMap writableMap = Arguments.createMap();
+        writableMap.putString("error", errorMessage);
+
+        sendNativeEvent(PROP_ON_LOCATION_SEARCH, writableMap, mapView.getId(), context);
+    }
 
     private LocaleUpdateListener localeUpdateListener = new LocaleUpdateListener() {
         @Override
@@ -443,6 +489,27 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                             new Animation(Animation.Type.SMOOTH, 1),
                             null);
                 }
+            }
+        } catch (Exception e) {
+            //TODO: Solve the error
+        }
+    }
+
+    public void getUserLocation() {
+        try {
+            if (userLocationLayer == null) {
+                this.addUserLocationLayer();
+            }
+
+            CameraPosition cameraPosition = userLocationLayer.cameraPosition();
+            if (cameraPosition != null) {
+
+                if (userSearchSession != null) {
+                    userSearchSession.cancel();
+                }
+
+                Point point = cameraPosition.getTarget();
+                userSearchSession = searchManager.submit(point, 20, new SearchOptions(), userSearchListener);
             }
         } catch (Exception e) {
             //TODO: Solve the error
@@ -701,6 +768,9 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             case NAVIGATE_TO_USER_LOCATION:
                 this.navigateToUserLocation();
                 return;
+            case GET_USER_LOCATION:
+                this.getUserLocation();
+                return;
             case NAVIGATE_TO_BOUNDING_BOX:
                 this.navigateToBoundingBox(args.getMap(0), args.getMap(1), null);
                 return;
@@ -721,28 +791,15 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
     @Nullable
     @Override
     public Map<String, Integer> getCommandsMap() {
-        Map<String, Integer> map = this.CreateMap(
-                "navigateToRegion", NAVIGATE_TO_REGION,
-                "zoomIn", ZOOM_IN,
-                "zoomOut", ZOOM_OUT,
-                "navigateToUserLocation", NAVIGATE_TO_USER_LOCATION,
-                "navigateToBoundingBox", NAVIGATE_TO_BOUNDING_BOX,
-                "fetchSuggestions", FETCH_SUGGESTIONS,
-                "stopMapKit", STOP_MAPKIT
-        );
-
-        return map;
-    }
-
-    public static <K, V> Map<K, V> CreateMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7) {
-        Map map = new HashMap<K, V>();
-        map.put(k1, v1);
-        map.put(k2, v2);
-        map.put(k3, v3);
-        map.put(k4, v4);
-        map.put(k5, v5);
-        map.put(k6, v6);
-        map.put(k7, v7);
+        Map map = new HashMap<String, Integer>();
+        map.put("navigateToRegion", NAVIGATE_TO_REGION);
+        map.put("zoomIn", ZOOM_IN);
+        map.put("zoomOut", ZOOM_OUT);
+        map.put("navigateToUserLocation", NAVIGATE_TO_USER_LOCATION);
+        map.put("navigateToBoundingBox", NAVIGATE_TO_BOUNDING_BOX);
+        map.put("fetchSuggestions", FETCH_SUGGESTIONS);
+        map.put("stopMapKit", STOP_MAPKIT);
+        map.put("getUserLocation", GET_USER_LOCATION);
 
         return map;
     }
@@ -756,6 +813,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 .put(PROP_ON_LOCATION_SEARCH, MapBuilder.of("registrationName", PROP_ON_LOCATION_SEARCH))
                 .put(PROP_ON_POLYGON_PRESS, MapBuilder.of("registrationName", PROP_ON_POLYGON_PRESS))
                 .put(PROP_ON_SUGGESTIONS_FETCH, MapBuilder.of("registrationName", PROP_ON_SUGGESTIONS_FETCH))
+                .put(PROP_ON_DEVICE_LOCATION_SEARCH, MapBuilder.of("registrationName", PROP_ON_DEVICE_LOCATION_SEARCH))
                 .build();
     }
 

@@ -89,14 +89,8 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
                                                      }
 
                                                      self.userSearchPlacemark = [mapObjects addPlacemarkWithPoint:resultLocation image:[userLocationImage decodeBase64ToImage]];
-                                                     NSString* descriptionLocation = [geoObject descriptionText];
-                                                     NSString* location = [[NSString alloc]init];
 
-                                                     if (descriptionLocation != nil) {
-                                                         location = [NSString stringWithFormat:@"%@%@%@", descriptionLocation, @", ", [geoObject name]];
-                                                     } else {
-                                                         location = [geoObject name];
-                                                     }
+                                                     NSString* location = [geoObject name];
 
                                                      NSDictionary* addressDict = @{
                                                                                    @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],
@@ -305,6 +299,42 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
         YMKAnimation* animation = [YMKAnimation animationWithType:YMKAnimationTypeSmooth duration:1];
 
         [self.map.mapWindow.map moveWithCameraPosition:cameraPos animationType:animation cameraCallback:nil];
+    }];
+}
+
+- (void) getUserLocation {
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        YMKPoint* point = [self getDeviceLocation];
+        YMKCameraPosition* cameraPos = [YMKCameraPosition cameraPositionWithTarget:point zoom:18 azimuth:0 tilt:0];
+
+        YMKSearchOptions* options = [YMKSearchOptions new];
+        options.searchTypes = YMKSearchTypeGeo;
+
+        _searchSession = [_searchManager submitWithPoint:cameraPos.target
+                                                    zoom:[NSNumber numberWithInt: 20]
+                                           searchOptions:options
+                                         responseHandler:^(YMKSearchResponse *response, NSError *error) {
+                                             NSArray* searchResultList = [[response collection] children];
+
+                                             if ([searchResultList count] > 0) {
+                                                 YMKGeoObject* geoObject = [searchResultList[0] obj];
+                                                 YMKPoint* resultLocation = [[geoObject geometry][0] point];
+
+                                                 if (resultLocation != nil) {
+                                                     NSString* location = [geoObject name];
+
+                                                     NSDictionary* addressDict = @{
+                                                                                   @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],
+                                                                                   @"longitude" : [NSString stringWithFormat:@"%f", point.longitude],
+                                                                                   @"location": location,
+                                                                                   };
+
+                                                     NSLog(@"onLocationSearch with output info: %@", addressDict);
+
+                                                     self.onDeviceLocationSearch(addressDict);
+                                                 }
+                                             }
+                                         }];
     }];
 }
 
