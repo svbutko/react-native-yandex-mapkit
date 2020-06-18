@@ -1,20 +1,40 @@
 import React, {PureComponent} from "react";
-import {MapViewProps, Region, LatLng, MarkerProps, Polygon} from "react-native-yandex-mapkit";
-import {findNodeHandle, NativeModules, requireNativeComponent, UIManager, processColor} from "react-native";
+import {
+    findNodeHandle,
+    NativeModules,
+    NativeSyntheticEvent,
+    processColor,
+    requireNativeComponent,
+    UIManager as NotTypedUIManager
+} from "react-native";
+import {
+    DeviceLocation,
+    LatLng,
+    MapViewProps,
+    MarkerData,
+    MarkerProps, NativeMapKitComponent,
+    Polygon,
+    Region,
+    RNYandexMapKitUIManager,
+    SuggestionsResult
+} from "./MapViewTypes";
 
-const RNYandexMapKit = requireNativeComponent("RNYandexMapKit");
+const RNYandexMapKit: typeof NativeMapKitComponent = requireNativeComponent("RNYandexMapKit");
 const RNYandexMapKitModule = NativeModules.RNYandexMapKit;
+const UIManager = NotTypedUIManager as RNYandexMapKitUIManager;
 
-interface IProps extends MapViewProps<any, any> {}
+interface IProps extends MapViewProps<unknown, unknown> {}
 
-export class MapView extends PureComponent<IProps> {
-    private lastMarkers: MarkerProps<any>[] | undefined;
-    private lastPolygons: Polygon<any>[] | undefined;
-    private markers: MarkerProps<any>[] | undefined;
-    private polygons: Polygon<any>[] | undefined;
+export class MapView extends PureComponent<MapViewProps<unknown, unknown>> {
+    private lastMarkers: MarkerProps<unknown>[] | undefined;
+    private lastPolygons: Polygon<unknown>[] | undefined;
+    private markers: MarkerProps<unknown>[] | undefined;
+    private polygons: Polygon<unknown>[] | undefined;
 
     constructor(props: IProps) {
         super(props);
+
+        this.cacheProps = this.cacheProps.bind(this);
         this._onLocationSearch = this._onLocationSearch.bind(this);
         this._onMarkerPress = this._onMarkerPress.bind(this);
         this._onMapPress = this._onMapPress.bind(this);
@@ -40,8 +60,8 @@ export class MapView extends PureComponent<IProps> {
                 markers={this.markers}
                 polygons={this.polygons}
                 onLocationSearch={this._onLocationSearch}
-                onMarkerPress={this._onMarkerPress}
                 onMapPress={this._onMapPress}
+                onMarkerPress={this._onMarkerPress}
                 onPolygonPress={this._onPolygonPress}
                 onDeviceLocationSearch={this._onDeviceLocationSearch}
                 onSuggestionsFetch={this._onSuggestionsFetch}
@@ -51,17 +71,20 @@ export class MapView extends PureComponent<IProps> {
 
     private cacheProps(): void {
         const {polygons, markers, disableMarkers} = this.props;
+
         if (this.lastPolygons != polygons) {
-            this.polygons = this.props.polygons && this.props.polygons.map(item => ({
+            this.polygons = this.props.polygons && this.props.polygons.map((item): Polygon<unknown> => ({
                 ...item,
-                backgroundColor: processColor(item.backgroundColor) as any,
-                borderColor: processColor(item.borderColor) as any,
+                backgroundColor: processColor(item.backgroundColor).toString(),
+                borderColor: processColor(item.borderColor).toString(),
             }));
         }
+
         this.lastPolygons = polygons;
+
         if (disableMarkers) {
             if (this.lastMarkers != markers) {
-                this.markers = this.props.markers && this.props.markers.map(item => {
+                this.markers = this.props.markers && this.props.markers.map((item): MarkerProps<unknown> => {
                     const {userData, ...markerProps} = item;
 
                     return markerProps;
@@ -74,27 +97,27 @@ export class MapView extends PureComponent<IProps> {
         }
     }
 
-    private _onSuggestionsFetch(event: any): void {
+    private _onSuggestionsFetch(event: NativeSyntheticEvent<SuggestionsResult>): void {
         this.props.onSuggestionsFetch && this.props.onSuggestionsFetch(event.nativeEvent);
     }
 
-    private _onLocationSearch(event: any): void {
+    private _onLocationSearch(event: NativeSyntheticEvent<unknown>): void {
         this.props.onLocationSearch && this.props.onLocationSearch(event.nativeEvent);
     }
 
-    private _onMarkerPress(event: any): void {
+    private _onMarkerPress(event: NativeSyntheticEvent<MarkerData<unknown>>): void {
         this.props.onMarkerPress && this.props.onMarkerPress(event.nativeEvent);
     }
 
-    private _onMapPress(event: any): void {
+    private _onMapPress(event: NativeSyntheticEvent<unknown>): void {
         this.props.onMapPress && this.props.onMapPress(event.nativeEvent);
     }
 
-    private _onPolygonPress(event: any): void {
+    private _onPolygonPress(event: NativeSyntheticEvent<MarkerData<unknown>>): void {
         this.props.onPolygonPress && this.props.onPolygonPress(event.nativeEvent);
     }
 
-    private _onDeviceLocationSearch(event: any): void {
+    private _onDeviceLocationSearch(event: NativeSyntheticEvent<DeviceLocation>): void {
         this.props.onDeviceLocationSearch && this.props.onDeviceLocationSearch(event.nativeEvent);
     }
 
