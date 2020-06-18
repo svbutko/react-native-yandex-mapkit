@@ -3,12 +3,9 @@
   "name": "react-native-yandex-mapkit",
   "version": "1.0.0",
   "description": "React Native Yandex MapKit component for iOS and Android",
-  "homepage": "http://git.dextechnology.com/svbutko/react-native-yandex-mapkit#readme",
+  "homepage": "https://github.com/svbutko/react-native-yandex-mapkit#readme",
   "main": "index.js",
   "typings": "index.d.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "react-native",
     "yandex",
@@ -24,24 +21,24 @@
     "react-native": "^0.41.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/plugin-proposal-decorators": "^7.6.0",
-    "@babel/runtime": "^7.6.0",
-    "@types/jest": "^24.0.18",
-    "@types/react-native": "^0.60.15",
-    "react": "16.9.0",
-    "react-native": "0.60.5",
-    "babel-jest": "24.9.0",
-    "jest": "24.9.0",
-    "metro-react-native-babel-preset": "0.56.0",
-    "ts-jest": "^24.1.0",
-    "tslint": "^5.20.0",
-    "tslint-react": "^4.1.0",
-    "typescript": "3.6.3"
+    "@babel/core": "7.10.2",
+    "@babel/plugin-proposal-decorators": "7.10.1",
+    "@babel/runtime": "7.10.2",
+    "@types/jest": "26.0.0",
+    "@types/react-native": "0.62.13",
+    "react": "16.13.1",
+    "react-native": "0.62.2",
+    "babel-jest": "26.0.1",
+    "jest": "26.0.1",
+    "metro-react-native-babel-preset": "0.59.0",
+    "ts-jest": "26.1.0",
+    "tslint": "6.1.2",
+    "tslint-react": "5.0.0",
+    "typescript": "3.9.5"
   },
   "repository": {
     "type": "git",
-    "url": "http://git.dextechnology.com/svbutko/react-native-yandex-mapkit.git"
+    "url": "https://github.com/svbutko/react-native-yandex-mapkit.git"
   },
   "jest": {
     "preset": "react-native",
