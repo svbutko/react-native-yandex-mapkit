@@ -732,7 +732,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
 
             for (int i = 0; i < suggestionsSize; i++) {
                 WritableMap suggestionObject = Arguments.createMap();
-                suggestionObject.putString("value", suggestItems.get(i).getDisplayText());
+                suggestionObject.putString("value", suggestItems.get(i).getTitle().getText());
                 suggestResult.pushMap(suggestionObject);
             }
 
