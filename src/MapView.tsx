@@ -12,7 +12,8 @@ import {
     LatLng,
     MapViewProps,
     MarkerData,
-    MarkerProps, NativeMapKitComponent,
+    MarkerProps,
+    NativeMapKitComponent,
     Polygon,
     Region,
     RNYandexMapKitUIManager,
@@ -25,7 +26,7 @@ const UIManager = NotTypedUIManager as RNYandexMapKitUIManager;
 
 interface IProps extends MapViewProps<unknown, unknown> {}
 
-export class MapView extends PureComponent<MapViewProps<unknown, unknown>> {
+export class MapView extends PureComponent<IProps> {
     private lastMarkers: MarkerProps<unknown>[] | undefined;
     private lastPolygons: Polygon<unknown>[] | undefined;
     private markers: MarkerProps<unknown>[] | undefined;
