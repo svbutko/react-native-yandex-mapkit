@@ -745,10 +745,19 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
         }
     };
 
-    public void fetchSuggestions(String query) {
+    public void fetchSuggestions(String query, @Nullable ReadableMap searchCoordinates) {
         searchManager.cancelSuggest();
         if (query != null && !query.equals("")) {
-            searchManager.suggest(query, suggestionBoundingBox, suggestionSearchOptions, suggestListener);
+            BoundingBox searchBox = suggestionBoundingBox;
+            if (searchCoordinates != null) {
+                ReadableMap southWest = searchCoordinates.getMap("southWest");
+                ReadableMap northEast = searchCoordinates.getMap("northEast");
+                searchBox = new BoundingBox(
+                    new Point(southWest.getDouble("latitude"), southWest.getDouble("longitude")),
+                    new Point(northEast.getDouble("latitude"), northEast.getDouble("longitude"))
+                );
+            }
+            searchManager.suggest(query, searchBox, suggestionSearchOptions, suggestListener);
         }
     }
 
@@ -775,7 +784,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
                 this.navigateToBoundingBox(args.getMap(0), args.getMap(1), null);
                 return;
             case FETCH_SUGGESTIONS:
-                this.fetchSuggestions(args.getString(0));
+                this.fetchSuggestions(args.getString(0), args.getMap(1));
                 return;
             case STOP_MAPKIT:
                 this.stopMapKit();

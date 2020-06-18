@@ -165,9 +165,9 @@ RCT_EXPORT_METHOD(zoomOut: (nonnull NSNumber *)reactTag)
     [mapKitView zoomOut];
 }
 
-RCT_EXPORT_METHOD(fetchSuggestions: (nonnull NSNumber *)reactTag query: (nonnull NSString *)query)
+RCT_EXPORT_METHOD(fetchSuggestions: (nonnull NSNumber *)reactTag query: (nonnull NSString *)query searchCoordinates: (nullable NSDictionary *)searchCoordinates)
 {
-    [mapKitView fetchSuggestions:query];
+    [mapKitView fetchSuggestions:query searchCoordinates: searchCoordinates];
 }
 
 - (instancetype) init

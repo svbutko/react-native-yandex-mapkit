@@ -362,11 +362,21 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
     }];
 }
 
-- (void) fetchSuggestions:(NSString *)query {
+- (void) fetchSuggestions:(NSString *)query searchCoordinates: (NSDictionary *)searchCoordinates {
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         [_searchManager cancelSuggest];
         if ([query length] != 0) {
             YMKBoundingBox* boundingBox = [YMKBoundingBox boundingBoxWithSouthWest:[YMKPoint pointWithLatitude:-180.0 longitude:41.151416124] northEast:[YMKPoint pointWithLatitude:180.0 longitude:81.2504]];
+            if (searchCoordinates != nil) {
+                NSDictionary* southWest = [searchCoordinates objectForKey:@"southWest"];
+                NSDictionary* northEast = [searchCoordinates objectForKey:@"northEast"];
+                boundingBox = [YMKBoundingBox boundingBoxWithSouthWest:
+                               [YMKPoint pointWithLatitude: [[southWest objectForKey:@"latitude"] doubleValue]
+                                                 longitude: [[southWest objectForKey:@"longitude"] doubleValue]]
+                                                             northEast:
+                               [YMKPoint pointWithLatitude: [[northEast objectForKey:@"latitude"] doubleValue]
+                                                 longitude: [[northEast objectForKey:@"longitude"] doubleValue]]];
+            }
 
             YMKSearchOptions* options = [YMKSearchOptions new];
             options.searchTypes = YMKSearchTypeGeo;
@@ -376,7 +386,7 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
                 unsigned long suggestionsSize = MIN(5, [suggestItems count]);
 
                 for (int i = 0; i < suggestionsSize; i++) {
-                    [suggestResult addObject:@{@"value": [[suggestItems objectAtIndex:i] title]}];
+                    [suggestResult addObject:@{@"value": [[suggestItems objectAtIndex:i] displayText]}];
                 }
 
                 NSMutableDictionary* resultObject = [[NSMutableDictionary alloc]init];

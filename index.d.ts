@@ -31,7 +31,7 @@ declare module "react-native-yandex-mapkit" {
         public zoomOut(): void;
         public navigateToUserLocation(): void;
         public getUserLocation(): void;
-        public fetchSuggestions(query: string): void;
+        public fetchSuggestions(query: string, searchCoordinates?: SearchCoordinates): void;
         public stopMapKit(): void;
     }
 
@@ -84,5 +84,10 @@ declare module "react-native-yandex-mapkit" {
 
     export interface MarkerData<B> extends LatLng {
         data?: B;
+    }
+
+    export interface SearchCoordinates {
+        southWest: LatLng;
+        northEast: LatLng;
     }
 }

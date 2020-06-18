@@ -1,5 +1,5 @@
 import React, {PureComponent} from "react";
-import {MapViewProps, Region, LatLng, MarkerProps, Polygon} from "react-native-yandex-mapkit";
+import {MapViewProps, Region, LatLng, MarkerProps, Polygon, SearchCoordinates} from "react-native-yandex-mapkit";
 import {findNodeHandle, NativeModules, requireNativeComponent, UIManager, processColor} from "react-native";
 
 const RNYandexMapKit = requireNativeComponent("RNYandexMapKit");
@@ -155,11 +155,11 @@ export class MapView extends PureComponent<IProps> {
         );
     }
 
-    public fetchSuggestions(query: string): void {
+    public fetchSuggestions(query: string, searchCoordinates: SearchCoordinates): void {
         UIManager.dispatchViewManagerCommand(
             findNodeHandle(this),
             UIManager.RNYandexMapKit.Commands.fetchSuggestions,
-            [query],
+            [query, searchCoordinates || null],
         );
     }
 }
