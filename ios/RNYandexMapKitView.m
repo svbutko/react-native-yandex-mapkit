@@ -386,7 +386,7 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
                 unsigned long suggestionsSize = MIN(5, [suggestItems count]);
 
                 for (int i = 0; i < suggestionsSize; i++) {
-                    [suggestResult addObject:@{@"value": [[suggestItems objectAtIndex:i] displayText]}];
+                    [suggestResult addObject:@{@"value": [[[suggestItems objectAtIndex:i] title] text]}];
                 }
 
                 NSMutableDictionary* resultObject = [[NSMutableDictionary alloc]init];
