@@ -9,7 +9,7 @@ or
 
 `$ npm install react-native-yandex-mapkit --save`
 
-### Mostly automatic installation
+### Automatic installation
 
 `$ react-native link react-native-yandex-mapkit`
 
@@ -37,13 +37,3 @@ or
   	```
       compile project(':react-native-yandex-mapkit')
   	```
-
-
-## Usage
-```javascript
-import {MapView} from "react-native-yandex-mapkit";
-
-// TODO: What to do with the module?
-RNReactNativeYandexMapkit;
-```
-  
