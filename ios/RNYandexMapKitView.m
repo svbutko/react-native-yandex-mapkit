@@ -90,12 +90,14 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
 
                                                      self.userSearchPlacemark = [mapObjects addPlacemarkWithPoint:resultLocation image:[userLocationImage decodeBase64ToImage]];
 
+                                                     NSString* descriptionLocation = [geoObject descriptionText];
                                                      NSString* location = [geoObject name];
 
                                                      NSDictionary* addressDict = @{
                                                                                    @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],
                                                                                    @"longitude" : [NSString stringWithFormat:@"%f", point.longitude],
                                                                                    @"location": location,
+                                                                                   @"descriptionLocation" : descriptionLocation,
                                                                                    };
 
                                                      NSLog(@"onLocationSearch with output info: %@", addressDict);
@@ -386,7 +388,10 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
                 unsigned long suggestionsSize = MIN(5, [suggestItems count]);
 
                 for (int i = 0; i < suggestionsSize; i++) {
-                    [suggestResult addObject:@{@"value": [[[suggestItems objectAtIndex:i] title] text]}];
+                    [suggestResult addObject:@{
+                        @"value": [[[suggestItems objectAtIndex:i] title] text],
+                        @"searchText": [[suggestItems objectAtIndex:i] searchText]
+                    }];
                 }
 
                 NSMutableDictionary* resultObject = [[NSMutableDictionary alloc]init];

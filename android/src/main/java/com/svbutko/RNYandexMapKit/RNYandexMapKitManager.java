@@ -207,9 +207,11 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             if (resultLocation != null) {
                 WritableMap writableMap = Arguments.createMap();
 
+                String descriptionLocation = geoObject.getDescriptionText();
                 String location = geoObject.getName();
 
                 writableMap.putString("location", location);
+                writableMap.putString("descriptionLocation", descriptionLocation);
                 writableMap.putDouble("latitude", resultLocation.getLatitude());
                 writableMap.putDouble("longitude", resultLocation.getLongitude());
                 return new SearchResult(writableMap, resultLocation);
@@ -733,6 +735,7 @@ public class RNYandexMapKitManager extends SimpleViewManager<MapView> implements
             for (int i = 0; i < suggestionsSize; i++) {
                 WritableMap suggestionObject = Arguments.createMap();
                 suggestionObject.putString("value", suggestItems.get(i).getTitle().getText());
+                suggestionObject.putString("searchText", suggestItems.get(i).getSearchText());
                 suggestResult.pushMap(suggestionObject);
             }
 

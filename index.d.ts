@@ -13,7 +13,7 @@ declare module "react-native-yandex-mapkit" {
         onMapPress?: (data: any) => void;
         onLocationSearch?: (data: any) => void;
         onSuggestionsFetch?: (data: SuggestionsResult) => void;
-        onDeviceLocationSearch?: (data: {location: string, latitude: number, longitude: number}) => void;
+        onDeviceLocationSearch?: (data: DeviceLocation) => void;
         searchLocation?: boolean;
         searchRoute?: MarkerProps[];
         searchMarker?: MarkerProps;
@@ -80,6 +80,7 @@ declare module "react-native-yandex-mapkit" {
 
     export interface Suggestion {
         value: string;
+        searchText: string;
     }
 
     export interface MarkerData<B> extends LatLng {
@@ -89,5 +90,10 @@ declare module "react-native-yandex-mapkit" {
     export interface SearchCoordinates {
         southWest: LatLng;
         northEast: LatLng;
+    }
+
+    export interface DeviceLocation extends LatLng {
+        location: string;
+        descriptionLocation?: string;
     }
 }
