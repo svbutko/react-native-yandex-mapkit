@@ -97,7 +97,7 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
                                                                                    @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],
                                                                                    @"longitude" : [NSString stringWithFormat:@"%f", point.longitude],
                                                                                    @"location": location,
-                                                                                   @"descriptionLocation" : descriptionLocation,
+                                                                                   @"descriptionLocation": descriptionLocation == nil ? @"" : descriptionLocation,
                                                                                    };
 
                                                      NSLog(@"onLocationSearch with output info: %@", addressDict);
@@ -323,12 +323,14 @@ static NSString* disabledImage = @"iVBORw0KGgoAAAANSUhEUgAAAB4AAAAqCAYAAACk2+sZA
                                                  YMKPoint* resultLocation = [[geoObject geometry][0] point];
 
                                                  if (resultLocation != nil) {
+                                                     NSString* descriptionLocation = [geoObject descriptionText];
                                                      NSString* location = [geoObject name];
 
                                                      NSDictionary* addressDict = @{
                                                                                    @"latitude" : [NSString stringWithFormat:@"%f", point.latitude],
                                                                                    @"longitude" : [NSString stringWithFormat:@"%f", point.longitude],
                                                                                    @"location": location,
+                                                                                   @"descriptionLocation": descriptionLocation == nil ? @"" : descriptionLocation,
                                                                                    };
 
                                                      NSLog(@"onLocationSearch with output info: %@", addressDict);
